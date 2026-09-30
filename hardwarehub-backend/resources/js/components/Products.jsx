@@ -31,8 +31,7 @@ export default function Products() {
     const [error, setError] = useState(null);
     const [notification, setNotification] = useState(null);
 
-    // Filter, Search, Tab, and Sort States
-    const [activeTab, setActiveTab] = useState('all'); // 'all', 'healthy', 'low_stock', 'out_of_stock', 'inactive'
+    // Filter, Search, and Sort States
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('newest'); // 'newest', 'stock_asc', 'stock_desc', 'price_asc', 'price_desc', 'name_asc'
     const [copiedSku, setCopiedSku] = useState(null);
@@ -118,55 +117,11 @@ export default function Products() {
         fetchProducts();
     };
 
-    // Computed Categories for Tabs
-    const tabCounts = useMemo(() => {
-        const counts = {
-            all: products.length,
-            healthy: 0,
-            low_stock: 0,
-            out_of_stock: 0,
-            inactive: 0
-        };
-
-        products.forEach(p => {
-            const threshold = p.low_stock_threshold !== undefined && p.low_stock_threshold !== null ? p.low_stock_threshold : 10;
-            if (p.status === 'inactive') {
-                counts.inactive++;
-            }
-            if (p.quantity <= 0) {
-                counts.out_of_stock++;
-            } else if (p.quantity <= threshold) {
-                counts.low_stock++;
-            } else {
-                counts.healthy++;
-            }
-        });
-
-        return counts;
-    }, [products]);
-
     // Filter & Sort Pipeline
     const filteredProducts = useMemo(() => {
         let list = [...products];
 
-        // 1. Tab Filter
-        if (activeTab === 'healthy') {
-            list = list.filter(p => {
-                const threshold = p.low_stock_threshold !== undefined && p.low_stock_threshold !== null ? p.low_stock_threshold : 10;
-                return p.quantity > threshold && p.status === 'active';
-            });
-        } else if (activeTab === 'low_stock') {
-            list = list.filter(p => {
-                const threshold = p.low_stock_threshold !== undefined && p.low_stock_threshold !== null ? p.low_stock_threshold : 10;
-                return p.quantity > 0 && p.quantity <= threshold;
-            });
-        } else if (activeTab === 'out_of_stock') {
-            list = list.filter(p => p.quantity <= 0);
-        } else if (activeTab === 'inactive') {
-            list = list.filter(p => p.status === 'inactive');
-        }
-
-        // 2. Search Filter
+        // Search Filter
         if (searchTerm.trim()) {
             const q = searchTerm.toLowerCase();
             list = list.filter(p => 
@@ -176,7 +131,7 @@ export default function Products() {
             );
         }
 
-        // 3. Sorting
+        // Sorting
         list.sort((a, b) => {
             if (sortBy === 'newest') return b.id - a.id;
             if (sortBy === 'stock_asc') return a.quantity - b.quantity;
@@ -188,7 +143,7 @@ export default function Products() {
         });
 
         return list;
-    }, [products, activeTab, searchTerm, sortBy]);
+    }, [products, searchTerm, sortBy]);
 
     // Paginated items
     const paginatedProducts = useMemo(() => {
@@ -243,79 +198,6 @@ export default function Products() {
                     <span>{error}</span>
                 </div>
             )}
-
-            {/* Segmented Status Tabs Filter */}
-            <div className="flex items-center overflow-x-auto pb-1 gap-2 border-b border-slate-200 select-none">
-                <button
-                    onClick={() => { setActiveTab('all'); setCurrentPage(1); }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
-                        activeTab === 'all'
-                            ? 'bg-slate-900 text-white shadow-xs'
-                            : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
-                    }`}
-                >
-                    <span>All Products</span>
-                    <span className={`px-1.5 py-0.2 rounded-md text-[10px] ${activeTab === 'all' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-600'}`}>
-                        {tabCounts.all}
-                    </span>
-                </button>
-
-                <button
-                    onClick={() => { setActiveTab('healthy'); setCurrentPage(1); }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
-                        activeTab === 'healthy'
-                            ? 'bg-emerald-600 text-white shadow-xs'
-                            : 'bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    }`}
-                >
-                    <span>🟢 Healthy Stock</span>
-                    <span className={`px-1.5 py-0.2 rounded-md text-[10px] ${activeTab === 'healthy' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
-                        {tabCounts.healthy}
-                    </span>
-                </button>
-
-                <button
-                    onClick={() => { setActiveTab('low_stock'); setCurrentPage(1); }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
-                        activeTab === 'low_stock'
-                            ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
-                            : 'bg-white hover:bg-amber-50 text-amber-800 border border-amber-200'
-                    }`}
-                >
-                    <span>⚠️ Low Stock Alerts</span>
-                    <span className={`px-1.5 py-0.2 rounded-md text-[10px] ${activeTab === 'low_stock' ? 'bg-amber-600 text-slate-950' : 'bg-amber-100 text-amber-900 font-bold'}`}>
-                        {tabCounts.low_stock}
-                    </span>
-                </button>
-
-                <button
-                    onClick={() => { setActiveTab('out_of_stock'); setCurrentPage(1); }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
-                        activeTab === 'out_of_stock'
-                            ? 'bg-rose-600 text-white shadow-xs'
-                            : 'bg-white hover:bg-rose-50 text-rose-700 border border-rose-200'
-                    }`}
-                >
-                    <span>❌ Out of Stock</span>
-                    <span className={`px-1.5 py-0.2 rounded-md text-[10px] ${activeTab === 'out_of_stock' ? 'bg-rose-700 text-white' : 'bg-rose-100 text-rose-800'}`}>
-                        {tabCounts.out_of_stock}
-                    </span>
-                </button>
-
-                <button
-                    onClick={() => { setActiveTab('inactive'); setCurrentPage(1); }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0 ${
-                        activeTab === 'inactive'
-                            ? 'bg-slate-700 text-white shadow-xs'
-                            : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
-                    }`}
-                >
-                    <span>Inactive</span>
-                    <span className={`px-1.5 py-0.2 rounded-md text-[10px] ${activeTab === 'inactive' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600'}`}>
-                        {tabCounts.inactive}
-                    </span>
-                </button>
-            </div>
 
             {/* Search & Sort Controls Bar */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-white border border-slate-200 p-3.5 rounded-2xl shadow-xs">

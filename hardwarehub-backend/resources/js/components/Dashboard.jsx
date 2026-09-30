@@ -385,19 +385,6 @@ export default function Dashboard({ setActivePage }) {
                             <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-600 transition-transform group-hover:translate-x-1" />
                         </button>
                     </div>
-
-                    <div className="pt-2 border-t border-slate-100">
-                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600 space-y-1">
-                            <div className="flex justify-between">
-                                <span className="text-slate-400">Database:</span>
-                                <span className="font-bold text-slate-800">MySQL (hardwarehub_db)</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-slate-400">Framework:</span>
-                                <span className="font-bold text-slate-800">Laravel 12 + React 19</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

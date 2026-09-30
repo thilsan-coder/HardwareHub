@@ -134,7 +134,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                         </div>
                     )}
 
-                    {/* Product Name */}
+                    {/* Row 1: Product Name (Full Width) */}
                     <div>
                         <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                             Product Name <span className="text-rose-500">*</span>
@@ -144,22 +144,22 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            placeholder="e.g. Claw Hammer 16oz"
-                            className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 border ${
+                            placeholder="e.g. Claw Hammer 16oz Steel"
+                            className={`w-full h-11 px-4 rounded-xl bg-slate-50 border ${
                                 errors.name ? 'border-rose-500' : 'border-slate-200'
                             } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
                         />
                         {errors.name && <p className="text-rose-600 text-xs mt-1">{errors.name[0]}</p>}
                     </div>
 
-                    {/* SKU & Status Row */}
+                    {/* Row 2: SKU & Status (2 Columns) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                 Product Code / SKU <span className="text-rose-500">*</span>
                             </label>
                             <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs font-mono">
+                                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs font-mono">
                                     <Hash className="w-4 h-4" />
                                 </span>
                                 <input
@@ -168,7 +168,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                                     value={formData.sku}
                                     onChange={(e) => setFormData({ ...formData, sku: e.target.value.toUpperCase() })}
                                     placeholder="HW-HAM-001"
-                                    className={`w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border font-mono ${
+                                    className={`w-full h-11 pl-10 pr-4 rounded-xl bg-slate-50 border font-mono ${
                                         errors.sku ? 'border-rose-500' : 'border-slate-200'
                                     } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
                                 />
@@ -183,7 +183,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                             <select
                                 value={formData.status}
                                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm font-medium focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                                className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm font-medium focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
                             >
                                 <option value="active">Active (Available)</option>
                                 <option value="inactive">Inactive (Disabled)</option>
@@ -192,14 +192,14 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                         </div>
                     </div>
 
-                    {/* Price, Quantity & Low Stock Alert Threshold Row */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Row 3: Unit Price & Quantity (2 Columns) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                 Unit Price ($) <span className="text-rose-500">*</span>
                             </label>
                             <div className="relative">
-                                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
+                                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm font-bold">
                                     $
                                 </span>
                                 <input
@@ -210,7 +210,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                                     value={formData.price}
                                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                                     placeholder="18.50"
-                                    className={`w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-50 border ${
+                                    className={`w-full h-11 pl-9 pr-4 rounded-xl bg-slate-50 border ${
                                         errors.price ? 'border-rose-500' : 'border-slate-200'
                                     } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
                                 />
@@ -230,15 +230,18 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                                 value={formData.quantity}
                                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                                 placeholder="45"
-                                className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 border ${
+                                className={`w-full h-11 px-4 rounded-xl bg-slate-50 border ${
                                     errors.quantity ? 'border-rose-500' : 'border-slate-200'
                                 } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
                             />
                             {errors.quantity && <p className="text-rose-600 text-xs mt-1">{errors.quantity[0]}</p>}
                         </div>
+                    </div>
 
+                    {/* Row 4: Low Stock Alert Limit & Helper Card (2 Columns) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                         <div>
-                            <label className="block text-xs font-bold text-amber-800 uppercase tracking-wider mb-1.5 flex items-center space-x-1">
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
                                 <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                                 <span>Low Stock Alert Limit <span className="text-rose-500">*</span></span>
                             </label>
@@ -250,18 +253,27 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                                 value={formData.low_stock_threshold}
                                 onChange={(e) => setFormData({ ...formData, low_stock_threshold: e.target.value })}
                                 placeholder="e.g. 5, 10, 20"
-                                className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 border ${
+                                className={`w-full h-11 px-4 rounded-xl bg-slate-50 border ${
                                     errors.low_stock_threshold ? 'border-rose-500' : 'border-amber-200'
                                 } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
                             />
                             {errors.low_stock_threshold && <p className="text-rose-600 text-xs mt-1">{errors.low_stock_threshold[0]}</p>}
                         </div>
-                    </div>
-                    <p className="text-[11px] text-slate-500 -mt-1">
-                        💡 Alert will trigger when stock level drops to or below this specified number.
-                    </p>
 
-                    {/* Description */}
+                        <div>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                                Alert Rule Guide
+                            </label>
+                            <div className="h-11 px-3.5 rounded-xl bg-amber-50/70 border border-amber-200 text-amber-900 flex items-center space-x-2 text-xs">
+                                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                                <span className="text-[11px] leading-tight text-amber-800 font-medium">
+                                    Alert triggers automatically when stock drops ≤ this limit.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Row 5: Description (Full Width) */}
                     <div>
                         <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                             Description (Optional)
