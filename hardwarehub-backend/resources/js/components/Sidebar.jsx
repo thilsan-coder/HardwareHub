@@ -43,19 +43,19 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
     ];
 
     return (
-        <aside className="w-64 bg-slate-900/95 border-r border-slate-800/80 flex flex-col justify-between shrink-0 select-none backdrop-blur-xl">
+        <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 select-none shadow-xs">
             {/* Top Brand Header */}
             <div>
-                <div className="p-6 border-b border-slate-800/80 flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-amber-500/20">
+                <div className="p-5 border-b border-slate-200 flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
                         <Wrench className="w-5 h-5 stroke-[2.5]" />
                     </div>
                     <div>
                         <div className="flex items-center space-x-1">
-                            <span className="text-lg font-extrabold text-white tracking-tight">Hardware</span>
-                            <span className="text-lg font-extrabold text-amber-500">Hub</span>
+                            <span className="text-lg font-extrabold text-slate-900 tracking-tight">Hardware</span>
+                            <span className="text-lg font-extrabold text-amber-600">Hub</span>
                         </div>
-                        <p className="text-[11px] font-medium text-slate-400 tracking-wide uppercase">
+                        <p className="text-[11px] font-semibold text-slate-400 tracking-wider uppercase">
                             Shop Management
                         </p>
                     </div>
@@ -75,20 +75,20 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
                             <button
                                 key={item.id}
                                 onClick={() => setActivePage(item.id)}
-                                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 group ${
+                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 group ${
                                     isActive
-                                        ? 'bg-gradient-to-r from-amber-500/20 to-amber-500/5 text-amber-400 border border-amber-500/30 shadow-md shadow-amber-500/5'
-                                        : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+                                        ? 'bg-amber-50 text-amber-900 border border-amber-200/90 shadow-xs'
+                                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
                                 }`}
                             >
                                 <div className="flex items-center space-x-3">
-                                    <Icon className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${
-                                        isActive ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400'
+                                    <Icon className={`w-4 h-4 transition-transform duration-150 group-hover:scale-105 ${
+                                        isActive ? 'text-amber-600' : 'text-slate-400 group-hover:text-slate-700'
                                     }`} />
                                     <span>{item.label}</span>
                                 </div>
 
-                                {isActive && <ChevronRight className="w-4 h-4 text-amber-400" />}
+                                {isActive && <ChevronRight className="w-4 h-4 text-amber-600" />}
                             </button>
                         );
                     })}
@@ -96,22 +96,22 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
             </div>
 
             {/* Bottom User Card & Logout */}
-            <div className="p-4 border-t border-slate-800/80 bg-slate-950/40 space-y-3">
-                <div className="flex items-center space-x-3 px-2 py-1.5 rounded-xl bg-slate-900 border border-slate-800/80">
-                    <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm">
+            <div className="p-4 border-t border-slate-200 bg-slate-50/60 space-y-3">
+                <div className="flex items-center space-x-3 px-3 py-2 rounded-xl bg-white border border-slate-200 shadow-xs">
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-800 font-bold text-xs">
                         {user?.name?.charAt(0) || 'A'}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-white truncate">{user?.name || 'Administrator'}</p>
-                        <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
+                        <p className="text-xs font-bold text-slate-900 truncate">{user?.name || 'Administrator'}</p>
+                        <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
                     </div>
-                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" title="Administrator" />
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" title="Administrator" />
                 </div>
 
                 <button
                     onClick={onLogout}
                     disabled={loggingOut}
-                    className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
+                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-xl bg-white hover:bg-rose-50 text-rose-600 hover:text-rose-700 border border-slate-200 hover:border-rose-200 text-xs font-bold transition-all duration-150 active:scale-[0.99] disabled:opacity-50 shadow-xs"
                 >
                     <LogOut className="w-4 h-4" />
                     <span>{loggingOut ? 'Logging out...' : 'Sign Out'}</span>

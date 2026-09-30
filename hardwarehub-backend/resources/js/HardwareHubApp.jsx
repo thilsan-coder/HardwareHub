@@ -68,9 +68,9 @@ export default function HardwareHubApp() {
 
     if (loadingAuth) {
         return (
-            <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400">
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-600">
                 <Loader2 className="w-9 h-9 animate-spin text-amber-500 mb-3" />
-                <span className="text-sm font-semibold tracking-wide">Loading HardwareHub...</span>
+                <span className="text-sm font-semibold tracking-wide text-slate-700">Loading HardwareHub...</span>
             </div>
         );
     }
@@ -80,9 +80,9 @@ export default function HardwareHubApp() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex font-sans antialiased overflow-hidden">
+        <div className="min-h-screen bg-slate-100 text-slate-800 flex font-sans antialiased overflow-hidden">
             {/* Desktop Sidebar */}
-            <div className="hidden md:flex h-screen sticky top-0">
+            <div className="hidden md:flex h-screen sticky top-0 shrink-0">
                 <Sidebar
                     user={user}
                     activePage={activePage}
@@ -96,10 +96,10 @@ export default function HardwareHubApp() {
             {sidebarOpen && (
                 <div className="fixed inset-0 z-50 flex md:hidden">
                     <div
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+                        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
                         onClick={() => setSidebarOpen(false)}
                     />
-                    <div className="relative flex-1 flex flex-col max-w-xs w-full bg-slate-900 shadow-2xl">
+                    <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-2xl">
                         <Sidebar
                             user={user}
                             activePage={activePage}
@@ -115,7 +115,7 @@ export default function HardwareHubApp() {
             )}
 
             {/* Main Application Area */}
-            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-slate-100">
                 <TopBar
                     activePage={activePage}
                     toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -139,8 +139,8 @@ export default function HardwareHubApp() {
                     )}
                 </main>
 
-                <footer className="border-t border-slate-900 bg-slate-950/60 py-4 px-8 text-center text-xs text-slate-500">
-                    HardwareHub — Hardware Shop Management System &copy; {new Date().getFullYear()}
+                <footer className="border-t border-slate-200 bg-white/80 py-4 px-8 text-center text-xs text-slate-500">
+                    HardwareHub — Hardware Shop Management System &copy; {new Date().getFullYear()} &bull; Professional Edition
                 </footer>
             </div>
         </div>
