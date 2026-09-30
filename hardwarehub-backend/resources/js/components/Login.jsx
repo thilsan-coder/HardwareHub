@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Wrench, Lock, Mail, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function Login({ onLoginSuccess }) {
-    const [email, setEmail] = useState('admin@hardwarehub.com');
-    const [password, setPassword] = useState('password');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -128,12 +128,6 @@ export default function Login({ onLoginSuccess }) {
                             </button>
                         </div>
                     </form>
-
-                    <div className="mt-6 pt-6 border-t border-slate-100 text-center">
-                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
-                            Demo Admin Credentials: <strong className="text-amber-800 font-mono">admin@hardwarehub.com</strong> / <strong className="text-amber-800 font-mono">password</strong>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
