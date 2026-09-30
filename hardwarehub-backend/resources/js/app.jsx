@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from './components/Navbar';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import Users from './components/Users';
+import Navbar from './components/Navbar.jsx';
+import Login from './components/Login.jsx';
+import Dashboard from './components/Dashboard.jsx';
+import Users from './components/Users.jsx';
 import { Loader2 } from 'lucide-react';
 
 export default function App() {
