@@ -1,81 +1,75 @@
 import React from 'react';
 import { 
-    Wrench, 
+    Layers,
     LayoutDashboard, 
     Users, 
     Package, 
     Trash2, 
     LogOut, 
-    ShieldCheck, 
     ChevronRight,
-    Store,
+    Boxes,
     Sparkles,
-    AlertTriangle
+    Shield
 } from 'lucide-react';
 
 export default function Sidebar({ user, activePage, setActivePage, onLogout, loggingOut }) {
     const navSections = [
         {
-            title: 'CORE PLATFORM',
+            title: 'Overview',
             items: [
                 {
                     id: 'dashboard',
-                    label: 'Dashboard Overview',
+                    label: 'Dashboard',
                     icon: LayoutDashboard,
-                    description: 'KPIs & metrics'
+                    description: 'Metrics & analytics'
                 }
             ]
         },
         {
-            title: 'INVENTORY CONTROL',
+            title: 'Inventory',
             items: [
                 {
                     id: 'products',
-                    label: 'Products Catalog',
+                    label: 'Products',
                     icon: Package,
-                    description: 'Stock & pricing'
+                    description: 'Catalog & stock levels'
                 },
                 {
                     id: 'recycle-bin',
                     label: 'Recycle Bin',
                     icon: Trash2,
-                    description: 'Soft-deleted items'
+                    description: 'Archived products'
                 }
             ]
         },
         {
-            title: 'ADMINISTRATION',
+            title: 'Settings',
             items: [
                 {
                     id: 'users',
                     label: 'System Users',
                     icon: Users,
-                    description: 'Staff & permissions'
+                    description: 'Admin accounts'
                 }
             ]
         }
     ];
 
     return (
-        <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 select-none shadow-sm">
-            {/* Top Store Header */}
+        <aside className="w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between shrink-0 select-none">
+            {/* Top Brand / Workspace Header */}
             <div>
-                <div className="p-5 border-b border-slate-200">
+                <div className="h-16 px-5 border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
-                            <Wrench className="w-5 h-5 stroke-[2.5]" />
+                        <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold shadow-sm shadow-indigo-600/20">
+                            <Boxes className="w-5 h-5 stroke-[2.2]" />
                         </div>
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0">
                             <div className="flex items-center space-x-1">
-                                <span className="text-lg font-extrabold text-slate-900 tracking-tight">Hardware</span>
-                                <span className="text-lg font-extrabold text-amber-600">Hub</span>
+                                <span className="text-base font-bold text-slate-900 tracking-tight">Hardware</span>
+                                <span className="text-base font-bold text-indigo-600">Hub</span>
                             </div>
-                            <div className="flex items-center space-x-1.5 mt-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                <span className="text-[11px] font-semibold text-slate-500 truncate">
-                                    Main Store &bull; Branch #1
-                                </span>
-                            </div>
+                            <p className="text-[10px] font-medium text-slate-400 -mt-0.5">Enterprise POS</p>
                         </div>
                     </div>
                 </div>
@@ -84,7 +78,7 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
                 <div className="p-3 space-y-6">
                     {navSections.map((section, sIndex) => (
                         <div key={sIndex} className="space-y-1">
-                            <div className="px-3 pb-1 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
+                            <div className="px-3 pb-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                                 {section.title}
                             </div>
                             {section.items.map((item) => {
@@ -95,25 +89,22 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
                                     <button
                                         key={item.id}
                                         onClick={() => setActivePage(item.id)}
-                                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left transition-all duration-150 group ${
+                                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-all duration-150 group ${
                                             isActive
-                                                ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
-                                                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                                                ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                                                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium'
                                         }`}
                                     >
-                                        <div className="flex items-center space-x-3 min-w-0">
-                                            <Icon className={`w-4 h-4 shrink-0 transition-transform duration-150 ${
-                                                isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400 group-hover:text-slate-700'
+                                        <div className="flex items-center space-x-2.5 min-w-0">
+                                            <Icon className={`w-4 h-4 shrink-0 transition-colors ${
+                                                isActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'
                                             }`} />
-                                            <div className="min-w-0">
-                                                <p className="text-xs truncate">{item.label}</p>
-                                                <p className={`text-[10px] truncate ${isActive ? 'text-slate-800' : 'text-slate-400'}`}>
-                                                    {item.description}
-                                                </p>
-                                            </div>
+                                            <span className="text-sm truncate">{item.label}</span>
                                         </div>
 
-                                        {isActive && <ChevronRight className="w-4 h-4 text-slate-950 shrink-0" />}
+                                        {isActive && (
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div>
+                                        )}
                                     </button>
                                 );
                             })}
@@ -122,31 +113,23 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
                 </div>
             </div>
 
-            {/* Bottom Profile & App Info */}
-            <div className="p-3 border-t border-slate-200 bg-slate-50/70 space-y-2.5">
-                {/* Store Status Pill */}
-                <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-[11px] text-slate-600">
-                    <span className="font-semibold text-slate-700">System v2.4</span>
-                    <span className="text-emerald-700 font-bold flex items-center space-x-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>POS Online</span>
-                    </span>
-                </div>
-
-                {/* User Card */}
-                <div className="flex items-center space-x-2.5 p-2 rounded-xl bg-white border border-slate-200 shadow-xs">
-                    <div className="w-8 h-8 rounded-lg bg-amber-100 border border-amber-200 text-amber-900 flex items-center justify-center font-bold text-xs shrink-0">
-                        {user?.name?.charAt(0) || 'A'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-slate-900 truncate">{user?.name || 'Administrator'}</p>
-                        <p className="text-[10px] text-slate-500 truncate">{user?.email}</p>
+            {/* Bottom Profile Section */}
+            <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200/80 shadow-xs">
+                    <div className="flex items-center space-x-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center shrink-0">
+                            {user?.name?.charAt(0)?.toUpperCase() || 'A'}
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-xs font-semibold text-slate-900 truncate">{user?.name || 'Admin User'}</p>
+                            <p className="text-[10px] text-slate-400 truncate">{user?.email}</p>
+                        </div>
                     </div>
                     <button
                         onClick={onLogout}
                         disabled={loggingOut}
                         title="Sign Out"
-                        className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors shrink-0"
                     >
                         <LogOut className="w-4 h-4" />
                     </button>

@@ -84,43 +84,43 @@ export default function UserFormModal({ isOpen, onClose, onUserCreated }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
             <div 
-                className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+                className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
                 onClick={onClose}
             />
 
             {/* Modal Dialog */}
-            <div className="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden z-10">
+            <div className="relative w-full max-w-lg bg-white border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden z-10">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-slate-50/70">
+                <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
                     <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-200 text-amber-800 flex items-center justify-center shadow-xs">
-                            <UserPlus className="w-5 h-5" />
+                        <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                            <UserPlus className="w-4 h-4" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900">Add System User</h3>
+                            <h3 className="text-sm font-semibold text-slate-900">Add System User</h3>
                             <p className="text-xs text-slate-500">Create a new administrator account with system access</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 
                 {/* Form Body */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="p-5 space-y-4">
                     {errors.general && (
-                        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center space-x-3 text-rose-700 text-sm">
-                            <AlertCircle className="w-5 h-5 shrink-0" />
+                        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 flex items-center space-x-2.5 text-rose-700 text-xs">
+                            <AlertCircle className="w-4 h-4 shrink-0" />
                             <span>{errors.general[0]}</span>
                         </div>
                     )}
 
                     {/* Full Name */}
                     <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
                             Full Name <span className="text-rose-500">*</span>
                         </label>
                         <div className="relative">
@@ -133,9 +133,9 @@ export default function UserFormModal({ isOpen, onClose, onUserCreated }) {
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 placeholder="e.g. Alex Fernando"
-                                className={`w-full h-11 pl-10 pr-4 rounded-xl bg-slate-50 border ${
+                                className={`w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50/70 border ${
                                     errors.name ? 'border-rose-500' : 'border-slate-200'
-                                } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
+                                } text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors`}
                             />
                         </div>
                         {errors.name && <p className="text-rose-600 text-xs mt-1">{errors.name[0]}</p>}
@@ -143,7 +143,7 @@ export default function UserFormModal({ isOpen, onClose, onUserCreated }) {
 
                     {/* Email Address */}
                     <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
                             Email Address <span className="text-rose-500">*</span>
                         </label>
                         <div className="relative">
@@ -156,18 +156,18 @@ export default function UserFormModal({ isOpen, onClose, onUserCreated }) {
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 placeholder="admin@hardwarehub.com"
-                                className={`w-full h-11 pl-10 pr-4 rounded-xl bg-slate-50 border ${
+                                className={`w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50/70 border ${
                                     errors.email ? 'border-rose-500' : 'border-slate-200'
-                                } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
+                                } text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors`}
                             />
                         </div>
                         {errors.email && <p className="text-rose-600 text-xs mt-1">{errors.email[0]}</p>}
                     </div>
 
                     {/* Password & Confirm Password (2 Columns) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">
                                 Password <span className="text-rose-500">*</span>
                             </label>
                             <div className="relative">
@@ -181,23 +181,23 @@ export default function UserFormModal({ isOpen, onClose, onUserCreated }) {
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     placeholder="Min. 6 chars"
-                                    className={`w-full h-11 pl-10 pr-10 rounded-xl bg-slate-50 border ${
+                                    className={`w-full h-10 pl-10 pr-9 rounded-xl bg-slate-50/70 border ${
                                         errors.password ? 'border-rose-500' : 'border-slate-200'
-                                    } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
+                                    } text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors`}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
                                 >
-                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                 </button>
                             </div>
                             {errors.password && <p className="text-rose-600 text-xs mt-1">{errors.password[0]}</p>}
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">
                                 Confirm Password <span className="text-rose-500">*</span>
                             </label>
                             <div className="relative">
@@ -210,9 +210,9 @@ export default function UserFormModal({ isOpen, onClose, onUserCreated }) {
                                     value={formData.password_confirmation}
                                     onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })}
                                     placeholder="Repeat password"
-                                    className={`w-full h-11 pl-10 pr-4 rounded-xl bg-slate-50 border ${
+                                    className={`w-full h-10 pl-10 pr-4 rounded-xl bg-slate-50/70 border ${
                                         errors.password_confirmation ? 'border-rose-500' : 'border-slate-200'
-                                    } text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:bg-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors`}
+                                    } text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors`}
                                 />
                             </div>
                             {errors.password_confirmation && (
@@ -222,27 +222,27 @@ export default function UserFormModal({ isOpen, onClose, onUserCreated }) {
                     </div>
 
                     {/* Footer Buttons */}
-                    <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200">
+                    <div className="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-sm font-semibold transition-colors shadow-xs"
+                            className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors shadow-xs"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={saving}
-                            className="flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-sm font-bold shadow-sm transition-all active:scale-95 disabled:opacity-50"
+                            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm shadow-indigo-600/20 transition-all active:scale-95 disabled:opacity-50"
                         >
                             {saving ? (
                                 <>
-                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
                                     <span>Creating Account...</span>
                                 </>
                             ) : (
                                 <>
-                                    <UserPlus className="w-4 h-4" />
+                                    <UserPlus className="w-3.5 h-3.5" />
                                     <span>Register User</span>
                                 </>
                             )}

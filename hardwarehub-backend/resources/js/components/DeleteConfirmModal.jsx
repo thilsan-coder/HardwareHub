@@ -23,13 +23,13 @@ export default function DeleteConfirmModal({ isOpen, onClose, product, onDeleted
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Failed to delete product');
+                throw new Error(data.message || 'Failed to archive product');
             }
 
             onDeleted(product.id);
             onClose();
         } catch (err) {
-            setError(err.message || 'Error occurred while deleting product');
+            setError(err.message || 'Error occurred while archiving product');
         } finally {
             setDeleting(false);
         }
@@ -39,45 +39,45 @@ export default function DeleteConfirmModal({ isOpen, onClose, product, onDeleted
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
             <div 
-                className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+                className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
                 onClick={onClose}
             />
 
             {/* Modal */}
-            <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 z-10 space-y-5">
+            <div className="relative w-full max-w-md bg-white border border-slate-200/80 rounded-2xl shadow-xl p-5 z-10 space-y-4">
                 <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-2xl bg-rose-100 border border-rose-200 text-rose-600 flex items-center justify-center shadow-xs">
-                        <AlertTriangle className="w-6 h-6" />
+                    <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                        <AlertTriangle className="w-4 h-4" />
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
                 </div>
 
-                <div className="space-y-2">
-                    <h3 className="text-lg font-bold text-slate-900">Delete Product</h3>
-                    <p className="text-sm text-slate-700">
-                        Are you sure you want to remove <span className="font-bold text-slate-900">{product.name}</span> (<span className="font-mono text-amber-800 font-semibold text-xs">{product.sku}</span>)?
+                <div className="space-y-1.5">
+                    <h3 className="text-sm font-semibold text-slate-900">Archive Product</h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                        Are you sure you want to move <span className="font-semibold text-slate-900">{product.name}</span> (<span className="font-mono text-slate-700">{product.sku}</span>) to the Recycle Bin?
                     </p>
-                    <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                        ℹ️ The item will be moved to the Recycle Bin and can be restored anytime.
+                    <p className="text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                        This item can be restored back to the catalog anytime from the Recycle Bin.
                     </p>
                 </div>
 
                 {error && (
-                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+                    <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs">
                         {error}
                     </div>
                 )}
 
-                <div className="flex items-center justify-end space-x-3 pt-2">
+                <div className="flex items-center justify-end space-x-2 pt-2">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors shadow-xs"
+                        className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors shadow-xs"
                     >
                         Cancel
                     </button>
@@ -85,17 +85,17 @@ export default function DeleteConfirmModal({ isOpen, onClose, product, onDeleted
                         type="button"
                         onClick={handleDelete}
                         disabled={deleting}
-                        className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm transition-all disabled:opacity-50 active:scale-95"
+                        className="flex items-center space-x-1.5 px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm transition-all disabled:opacity-50 active:scale-95"
                     >
                         {deleting ? (
                             <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                <span>Deleting...</span>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                <span>Archiving...</span>
                             </>
                         ) : (
                             <>
-                                <Trash2 className="w-4 h-4" />
-                                <span>Delete Item</span>
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Move to Recycle Bin</span>
                             </>
                         )}
                     </button>

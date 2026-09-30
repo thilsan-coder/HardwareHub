@@ -50,32 +50,27 @@ export default function Users() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200">
-                <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-200 text-amber-800 flex items-center justify-center shadow-xs">
-                        <UsersIcon className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">System Users</h1>
-                        <p className="text-xs text-slate-500">Registered administrator accounts with system access permissions</p>
-                    </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-200/80">
+                <div className="space-y-0.5">
+                    <h1 className="text-xl font-bold text-slate-900 tracking-tight">System Users</h1>
+                    <p className="text-xs text-slate-500">Registered administrator accounts with administrative permissions</p>
                 </div>
                 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2.5">
                     <button
                         onClick={fetchUsers}
                         disabled={loading}
-                        className="inline-flex items-center space-x-2 p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 text-sm font-semibold transition-colors shadow-xs"
+                        className="p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200/80 text-xs font-medium transition-colors shadow-xs"
                         title="Refresh Users"
                     >
-                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
                     </button>
 
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-sm font-bold shadow-sm transition-all active:scale-95"
+                        className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm shadow-indigo-600/20 transition-all active:scale-95"
                     >
-                        <Plus className="w-4 h-4 stroke-[2.5]" />
+                        <Plus className="w-4 h-4 stroke-[2.2]" />
                         <span>Add New User</span>
                     </button>
                 </div>
@@ -83,38 +78,38 @@ export default function Users() {
 
             {/* Notification Toast */}
             {notification && (
-                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center space-x-3 text-emerald-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">
-                    <Check className="w-5 h-5 shrink-0 text-emerald-600" />
-                    <span className="font-semibold">{notification}</span>
+                <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center space-x-3 text-emerald-800 text-xs font-semibold shadow-xs animate-in fade-in slide-in-from-top-2">
+                    <Check className="w-4 h-4 shrink-0 text-emerald-600" />
+                    <span>{notification}</span>
                 </div>
             )}
 
             {error && (
-                <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center space-x-3 text-rose-700 text-sm shadow-xs">
-                    <AlertCircle className="w-5 h-5 shrink-0" />
+                <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center space-x-3 text-rose-700 text-xs shadow-xs">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
                     <span>{error}</span>
                 </div>
             )}
 
             {/* Users Table Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
-                                <th className="py-3.5 px-6">ID</th>
-                                <th className="py-3.5 px-6">User Name</th>
-                                <th className="py-3.5 px-6">Email Address</th>
-                                <th className="py-3.5 px-6">Role</th>
-                                <th className="py-3.5 px-6">Joined Date</th>
+                            <tr className="bg-slate-50/60 border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                                <th className="py-3 px-5">ID</th>
+                                <th className="py-3 px-5">User Name</th>
+                                <th className="py-3 px-5">Email Address</th>
+                                <th className="py-3 px-5">Role</th>
+                                <th className="py-3 px-5">Joined Date</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 text-sm">
+                        <tbody className="divide-y divide-slate-100 text-xs">
                             {loading ? (
                                 <tr>
                                     <td colSpan="5" className="py-12 text-center text-slate-500">
-                                        <RefreshCw className="w-6 h-6 animate-spin mx-auto text-amber-600 mb-2" />
-                                        <span>Loading user accounts...</span>
+                                        <RefreshCw className="w-5 h-5 animate-spin mx-auto text-indigo-600 mb-2" />
+                                        <span className="font-medium text-xs">Loading user accounts...</span>
                                     </td>
                                 </tr>
                             ) : usersList.length === 0 ? (
@@ -125,24 +120,29 @@ export default function Users() {
                                 </tr>
                             ) : (
                                 paginatedUsers.map((user) => (
-                                    <tr key={user.id} className="hover:bg-slate-50/80 transition-colors">
-                                        <td className="py-4 px-6 text-slate-500 font-mono text-xs font-bold">#{user.id}</td>
-                                        <td className="py-4 px-6 font-bold text-slate-900">
-                                            {user.name}
+                                    <tr key={user.id} className="hover:bg-slate-50/70 transition-colors">
+                                        <td className="py-3.5 px-5 text-slate-400 font-mono text-xs">#{user.id}</td>
+                                        <td className="py-3.5 px-5 font-medium text-slate-900">
+                                            <div className="flex items-center space-x-2.5">
+                                                <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 font-semibold text-xs flex items-center justify-center">
+                                                    {user.name.charAt(0).toUpperCase()}
+                                                </div>
+                                                <span>{user.name}</span>
+                                            </div>
                                         </td>
-                                        <td className="py-4 px-6 text-slate-700">
+                                        <td className="py-3.5 px-5 text-slate-600">
                                             <div className="flex items-center space-x-2">
-                                                <Mail className="w-4 h-4 text-slate-400" />
+                                                <Mail className="w-3.5 h-3.5 text-slate-400" />
                                                 <span>{user.email}</span>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
-                                            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                                                <Shield className="w-3.5 h-3.5 text-amber-600" />
+                                        <td className="py-3.5 px-5">
+                                            <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200/80">
+                                                <Shield className="w-3 h-3 text-indigo-600" />
                                                 <span>Administrator</span>
                                             </span>
                                         </td>
-                                        <td className="py-4 px-6 text-slate-500 text-xs">
+                                        <td className="py-3.5 px-5 text-slate-400 text-xs">
                                             <div className="flex items-center space-x-1.5">
                                                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
                                                 <span>{new Date(user.created_at).toLocaleDateString()}</span>
