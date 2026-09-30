@@ -5,6 +5,7 @@ import Login from './components/Login.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import Users from './components/Users.jsx';
 import Products from './components/Products.jsx';
+import RecycleBin from './components/RecycleBin.jsx';
 import { Loader2 } from 'lucide-react';
 
 export default function HardwareHubApp() {
@@ -127,6 +128,10 @@ export default function HardwareHubApp() {
 
                     {activePage === 'products' && (
                         <Products />
+                    )}
+
+                    {activePage === 'recycle-bin' && (
+                        <RecycleBin setActivePage={setActivePage} />
                     )}
 
                     {activePage === 'users' && (

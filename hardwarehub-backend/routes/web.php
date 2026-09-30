@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthWebController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductWebController;
+use App\Http\Controllers\RecycleBinWebController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,11 @@ Route::middleware(['web'])->group(function () {
         Route::get('/api/web/products/{id}', [ProductWebController::class, 'show']);
         Route::put('/api/web/products/{id}', [ProductWebController::class, 'update']);
         Route::delete('/api/web/products/{id}', [ProductWebController::class, 'destroy']);
+
+        // Recycle Bin & Soft Delete Routes (Phase 5)
+        Route::get('/api/web/recycle-bin', [RecycleBinWebController::class, 'index']);
+        Route::post('/api/web/recycle-bin/{id}/restore', [RecycleBinWebController::class, 'restore']);
+        Route::delete('/api/web/recycle-bin/{id}/force-delete', [RecycleBinWebController::class, 'forceDelete']);
     });
 });
 

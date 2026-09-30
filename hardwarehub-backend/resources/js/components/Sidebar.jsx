@@ -27,18 +27,18 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
             disabled: false,
         },
         {
+            id: 'recycle-bin',
+            label: 'Recycle Bin',
+            icon: Trash2,
+            badge: null,
+            disabled: false,
+        },
+        {
             id: 'users',
             label: 'System Users',
             icon: Users,
             badge: null,
             disabled: false,
-        },
-        {
-            id: 'recycle-bin',
-            label: 'Recycle Bin',
-            icon: Trash2,
-            badge: 'Phase 5',
-            disabled: true,
         },
     ];
 
@@ -74,35 +74,21 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
                         return (
                             <button
                                 key={item.id}
-                                onClick={() => {
-                                    if (item.disabled) {
-                                        alert(`${item.label} module will be implemented in ${item.badge}.`);
-                                    } else {
-                                        setActivePage(item.id);
-                                    }
-                                }}
+                                onClick={() => setActivePage(item.id)}
                                 className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 group ${
                                     isActive
                                         ? 'bg-gradient-to-r from-amber-500/20 to-amber-500/5 text-amber-400 border border-amber-500/30 shadow-md shadow-amber-500/5'
-                                        : item.disabled
-                                        ? 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/40 cursor-pointer'
                                         : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
                                 }`}
                             >
                                 <div className="flex items-center space-x-3">
                                     <Icon className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${
-                                        isActive ? 'text-amber-400' : item.disabled ? 'text-slate-400' : 'text-slate-400 group-hover:text-amber-400'
+                                        isActive ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400'
                                     }`} />
                                     <span>{item.label}</span>
                                 </div>
 
-                                {item.badge ? (
-                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/60">
-                                        {item.badge}
-                                    </span>
-                                ) : isActive ? (
-                                    <ChevronRight className="w-4 h-4 text-amber-400" />
-                                ) : null}
+                                {isActive && <ChevronRight className="w-4 h-4 text-amber-400" />}
                             </button>
                         );
                     })}

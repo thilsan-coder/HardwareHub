@@ -193,7 +193,7 @@ export default function Dashboard({ setActivePage }) {
 
                         {/* Recycle Bin (Phase 5) */}
                         <button
-                            onClick={() => alert('Soft Delete & Recycle Bin will be implemented in PHASE 5.')}
+                            onClick={() => setActivePage('recycle-bin')}
                             className="flex items-center justify-between p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-rose-500/40 hover:bg-slate-800/40 transition-all group text-left"
                         >
                             <div className="flex items-center space-x-3.5">
@@ -205,9 +205,8 @@ export default function Dashboard({ setActivePage }) {
                                         <span className="font-bold text-white group-hover:text-rose-400 transition-colors text-sm">
                                             Recycle Bin
                                         </span>
-                                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">Phase 5</span>
                                     </div>
-                                    <span className="text-xs text-slate-400">Restore soft-deleted items</span>
+                                    <span className="text-xs text-slate-400">Restore or purge soft-deleted items</span>
                                 </div>
                             </div>
                             <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-rose-400 transition-transform group-hover:translate-x-1" />
