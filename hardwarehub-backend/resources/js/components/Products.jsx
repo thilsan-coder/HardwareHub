@@ -38,7 +38,7 @@ export default function Products() {
 
     // Pagination States
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
 
     // Modal States
     const [formModalOpen, setFormModalOpen] = useState(false);

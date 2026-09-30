@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-r
 export default function Pagination({
     currentPage = 1,
     totalItems = 0,
-    pageSize = 10,
+    pageSize = 5,
     onPageChange,
     onPageSizeChange,
     pageSizeOptions = [5, 10, 25, 50]

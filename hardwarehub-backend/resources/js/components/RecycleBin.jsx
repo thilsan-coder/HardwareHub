@@ -23,7 +23,7 @@ export default function RecycleBin({ setActivePage }) {
 
     // Pagination States
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
 
     // Modal state for Permanent Delete
     const [forceDeleteModalOpen, setForceDeleteModalOpen] = useState(false);
