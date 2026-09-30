@@ -115,13 +115,13 @@ export default function HardwareHubApp() {
             )}
 
             {/* Main Application Area */}
-            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-slate-50/70">
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-slate-50/70">
                 <TopBar
                     activePage={activePage}
                     toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
                 />
 
-                <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto">
+                <main className="flex-1 overflow-y-auto no-scrollbar p-6 sm:p-8 max-w-7xl w-full mx-auto">
                     {activePage === 'dashboard' && (
                         <Dashboard setActivePage={setActivePage} />
                     )}
@@ -139,7 +139,7 @@ export default function HardwareHubApp() {
                     )}
                 </main>
 
-                <footer className="border-t border-slate-200/80 bg-white/70 py-3.5 px-8 text-center text-xs text-slate-400">
+                <footer className="shrink-0 border-t border-slate-200/80 bg-white/85 backdrop-blur-xs py-3 px-8 text-center text-xs text-slate-400 select-none">
                     HardwareHub &bull; Shop Management System &copy; {new Date().getFullYear()} &bull; Professional Edition
                 </footer>
             </div>
