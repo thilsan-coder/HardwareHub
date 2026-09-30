@@ -5,7 +5,8 @@ export default function ProductViewModal({ isOpen, onClose, product, onEdit, onD
     if (!isOpen || !product) return null;
 
     const isActive = product.status === 'active';
-    const isLowStock = product.quantity <= 20;
+    const threshold = product.low_stock_threshold !== undefined && product.low_stock_threshold !== null ? product.low_stock_threshold : 10;
+    const isLowStock = product.quantity <= threshold;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -58,7 +59,7 @@ export default function ProductViewModal({ isOpen, onClose, product, onEdit, onD
                     {isLowStock && (
                         <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center space-x-3 text-amber-300 text-xs font-bold">
                             <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
-                            <span>Low Stock Alert: Only {product.quantity} units remaining in stock. Consider reordering soon.</span>
+                            <span>Low Stock Alert: Only {product.quantity} units remaining in stock (Configured threshold: ≤{threshold} units). Restocking recommended.</span>
                         </div>
                     )}
 
@@ -72,23 +73,32 @@ export default function ProductViewModal({ isOpen, onClose, product, onEdit, onD
                         </p>
                     </div>
 
-                    {/* Price & Quantity Grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
-                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                    {/* Price, Quantity & Alert Threshold Grid */}
+                    <div className="grid grid-cols-3 gap-3">
+                        <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                                 Unit Price
                             </span>
-                            <span className="text-2xl font-black text-amber-400 font-mono">
+                            <span className="text-xl font-black text-amber-400 font-mono">
                                 ${parseFloat(product.price).toFixed(2)}
                             </span>
                         </div>
 
-                        <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80">
-                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                                Stock In Hand
+                        <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                                In Stock
                             </span>
-                            <span className="text-2xl font-black text-white font-mono">
-                                {product.quantity} <span className="text-xs font-normal text-slate-400">units</span>
+                            <span className={`text-xl font-black font-mono ${isLowStock ? 'text-amber-400' : 'text-white'}`}>
+                                {product.quantity} <span className="text-[10px] font-normal text-slate-400">pcs</span>
+                            </span>
+                        </div>
+
+                        <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80">
+                            <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block mb-1">
+                                Alert Limit
+                            </span>
+                            <span className="text-xl font-black text-slate-200 font-mono">
+                                ≤{threshold} <span className="text-[10px] font-normal text-slate-400">pcs</span>
                             </span>
                         </div>
                     </div>

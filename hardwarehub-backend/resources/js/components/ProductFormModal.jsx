@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, AlertCircle, Loader2, Package, Hash, DollarSign, Layers, CheckCircle2 } from 'lucide-react';
+import { X, Save, AlertCircle, Loader2, Package, Hash, DollarSign, Layers, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 export default function ProductFormModal({ isOpen, onClose, product, onSaved }) {
     const isEdit = Boolean(product && product.id);
@@ -10,6 +10,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
         description: '',
         price: '',
         quantity: '',
+        low_stock_threshold: '10',
         status: 'active',
     });
 
@@ -24,6 +25,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                 description: product.description || '',
                 price: product.price ? String(product.price) : '',
                 quantity: product.quantity !== undefined ? String(product.quantity) : '',
+                low_stock_threshold: product.low_stock_threshold !== undefined && product.low_stock_threshold !== null ? String(product.low_stock_threshold) : '10',
                 status: product.status || 'active',
             });
         } else {
@@ -33,6 +35,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                 description: '',
                 price: '',
                 quantity: '',
+                low_stock_threshold: '10',
                 status: 'active',
             });
         }
@@ -64,6 +67,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                     description: formData.description || null,
                     price: parseFloat(formData.price),
                     quantity: parseInt(formData.quantity, 10),
+                    low_stock_threshold: parseInt(formData.low_stock_threshold, 10) >= 0 ? parseInt(formData.low_stock_threshold, 10) : 10,
                     status: formData.status,
                 }),
             });
@@ -188,8 +192,8 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                         </div>
                     </div>
 
-                    {/* Price & Quantity Row */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Price, Quantity & Low Stock Alert Threshold Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                                 Unit Price ($) <span className="text-rose-500">*</span>
@@ -216,7 +220,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
 
                         <div>
                             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                                Stock Quantity <span className="text-rose-500">*</span>
+                                Stock In Hand <span className="text-rose-500">*</span>
                             </label>
                             <input
                                 type="number"
@@ -232,7 +236,30 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                             />
                             {errors.quantity && <p className="text-rose-400 text-xs mt-1">{errors.quantity[0]}</p>}
                         </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5 flex items-center space-x-1">
+                                <AlertTriangle className="w-3.5 h-3.5" />
+                                <span>Low Stock Alert</span>
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="1"
+                                required
+                                value={formData.low_stock_threshold}
+                                onChange={(e) => setFormData({ ...formData, low_stock_threshold: e.target.value })}
+                                placeholder="10"
+                                className={`w-full px-4 py-2.5 rounded-xl bg-slate-950 border ${
+                                    errors.low_stock_threshold ? 'border-rose-500' : 'border-amber-500/30'
+                                } text-white placeholder-slate-500 text-sm focus:outline-none focus:border-amber-500 transition-colors`}
+                            />
+                            {errors.low_stock_threshold && <p className="text-rose-400 text-xs mt-1">{errors.low_stock_threshold[0]}</p>}
+                        </div>
                     </div>
+                    <p className="text-[11px] text-slate-400 -mt-1">
+                        💡 Low stock warning triggers when inventory drops to or below the alert limit (default: 10 units).
+                    </p>
 
                     {/* Description */}
                     <div>

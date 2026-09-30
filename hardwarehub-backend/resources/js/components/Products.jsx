@@ -108,12 +108,11 @@ export default function Products() {
         fetchProducts();
     };
 
-    // Filter low stock (< 20 units threshold)
-    const lowStockThreshold = 20;
-    const lowStockCount = products.filter(p => p.quantity <= lowStockThreshold).length;
+    // Filter low stock using per-product threshold (fallback 10)
+    const lowStockCount = products.filter(p => p.quantity <= (p.low_stock_threshold !== undefined && p.low_stock_threshold !== null ? p.low_stock_threshold : 10)).length;
 
     const displayedProducts = onlyLowStock
-        ? products.filter(p => p.quantity <= lowStockThreshold)
+        ? products.filter(p => p.quantity <= (p.low_stock_threshold !== undefined && p.low_stock_threshold !== null ? p.low_stock_threshold : 10))
         : products;
 
     return (
@@ -127,7 +126,7 @@ export default function Products() {
                         </div>
                         <div>
                             <h1 className="text-2xl font-bold text-white tracking-tight">Products Management</h1>
-                            <p className="text-xs text-slate-400">Inventory catalog, pricing, quantity & real-time stock alert</p>
+                            <p className="text-xs text-slate-400">Inventory catalog, custom stock alert limits & real-time monitoring</p>
                         </div>
                     </div>
                 </div>
@@ -165,7 +164,7 @@ export default function Products() {
                                 Low Stock Alert: <strong className="text-white">{lowStockCount}</strong> products require restocking!
                             </span>
                             <p className="text-xs text-slate-400">
-                                Stock quantity is at or below {lowStockThreshold} units.
+                                Inventory has fallen to or below the customized low-stock threshold for these items.
                             </p>
                         </div>
                     </div>
@@ -260,7 +259,8 @@ export default function Products() {
                             ) : (
                                 displayedProducts.map((prod) => {
                                     const isActive = prod.status === 'active';
-                                    const isLowStock = prod.quantity <= lowStockThreshold;
+                                    const threshold = prod.low_stock_threshold !== undefined && prod.low_stock_threshold !== null ? prod.low_stock_threshold : 10;
+                                    const isLowStock = prod.quantity <= threshold;
                                     const isOutOfStock = prod.quantity <= 0;
 
                                     return (
@@ -290,19 +290,28 @@ export default function Products() {
                                             {/* Quantity & Low Stock Alert Badge */}
                                             <td className="py-4 px-6">
                                                 {isOutOfStock ? (
-                                                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                                                        <XCircle className="w-3.5 h-3.5" />
-                                                        <span>Out of Stock (0)</span>
-                                                    </span>
+                                                    <div className="space-y-1">
+                                                        <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                                            <XCircle className="w-3.5 h-3.5" />
+                                                            <span>Out of Stock (0)</span>
+                                                        </span>
+                                                        <div className="text-[11px] text-slate-500 font-mono">Alert Limit: ≤{threshold}</div>
+                                                    </div>
                                                 ) : isLowStock ? (
-                                                    <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 animate-pulse">
-                                                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                                                        <span>Low Stock ({prod.quantity} left)</span>
-                                                    </span>
+                                                    <div className="space-y-1">
+                                                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 animate-pulse">
+                                                            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                                                            <span>Low Stock ({prod.quantity} left)</span>
+                                                        </span>
+                                                        <div className="text-[11px] text-amber-400/80 font-mono font-semibold">Alert Limit: ≤{threshold}</div>
+                                                    </div>
                                                 ) : (
-                                                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700/60 font-mono">
-                                                        <span>{prod.quantity} units in stock</span>
-                                                    </span>
+                                                    <div className="space-y-1">
+                                                        <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700/60 font-mono">
+                                                            <span>{prod.quantity} units</span>
+                                                        </span>
+                                                        <div className="text-[11px] text-slate-500 font-mono">Alert Limit: ≤{threshold}</div>
+                                                    </div>
                                                 )}
                                             </td>
 
