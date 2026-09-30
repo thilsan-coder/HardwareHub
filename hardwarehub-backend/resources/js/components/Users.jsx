@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Users as UsersIcon, Shield, Mail, Calendar, RefreshCw, AlertCircle } from 'lucide-react';
+import { Users as UsersIcon, Shield, Mail, Calendar, RefreshCw, AlertCircle, Plus, Check } from 'lucide-react';
 import Pagination from './Pagination.jsx';
+import UserFormModal from './UserFormModal.jsx';
 
 export default function Users() {
     const [usersList, setUsersList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [notification, setNotification] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +35,16 @@ export default function Users() {
         fetchUsers();
     }, []);
 
+    const showToast = (message) => {
+        setNotification(message);
+        setTimeout(() => setNotification(null), 4000);
+    };
+
+    const handleUserCreated = (newUser) => {
+        showToast(`User "${newUser.name}" created successfully!`);
+        fetchUsers();
+    };
+
     const paginatedUsers = usersList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     return (
@@ -47,15 +60,34 @@ export default function Users() {
                         <p className="text-xs text-slate-500">Registered administrator accounts with system access permissions</p>
                     </div>
                 </div>
-                <button
-                    onClick={fetchUsers}
-                    disabled={loading}
-                    className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 text-sm font-semibold transition-colors shadow-xs w-fit"
-                >
-                    <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                    <span>Refresh</span>
-                </button>
+                
+                <div className="flex items-center space-x-3">
+                    <button
+                        onClick={fetchUsers}
+                        disabled={loading}
+                        className="inline-flex items-center space-x-2 p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 text-sm font-semibold transition-colors shadow-xs"
+                        title="Refresh Users"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                    </button>
+
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-sm font-bold shadow-sm transition-all active:scale-95"
+                    >
+                        <Plus className="w-4 h-4 stroke-[2.5]" />
+                        <span>Add New User</span>
+                    </button>
+                </div>
             </div>
+
+            {/* Notification Toast */}
+            {notification && (
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center space-x-3 text-emerald-800 text-sm shadow-xs animate-in fade-in slide-in-from-top-2">
+                    <Check className="w-5 h-5 shrink-0 text-emerald-600" />
+                    <span className="font-semibold">{notification}</span>
+                </div>
+            )}
 
             {error && (
                 <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-center space-x-3 text-rose-700 text-sm shadow-xs">
@@ -135,6 +167,13 @@ export default function Users() {
                     }}
                 />
             </div>
+
+            {/* Add User Modal */}
+            <UserFormModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onUserCreated={handleUserCreated}
+            />
         </div>
     );
 }

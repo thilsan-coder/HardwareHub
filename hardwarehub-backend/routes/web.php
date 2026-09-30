@@ -16,6 +16,7 @@ Route::middleware(['web'])->group(function () {
         Route::post('/api/web/logout', [AuthWebController::class, 'logout']);
         Route::get('/api/web/dashboard-stats', [DashboardController::class, 'stats']);
         Route::get('/api/web/users', [UserController::class, 'index']);
+        Route::post('/api/web/users', [UserController::class, 'store']);
 
         // Product CRUD Routes (Phase 4)
         Route::get('/api/web/products', [ProductWebController::class, 'index']);
