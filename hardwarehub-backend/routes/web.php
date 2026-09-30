@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Route;
 
 // Web API endpoints for React Web Admin
 Route::middleware(['web'])->group(function () {
-    Route::post('/api/web/login', [AuthWebController::class, 'login']);
+    Route::post('/api/web/login', [AuthWebController::class, 'login'])->name('login');
+    Route::get('/api/web/me', [AuthWebController::class, 'user']);
 
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth:web'])->group(function () {
         Route::post('/api/web/logout', [AuthWebController::class, 'logout']);
-        Route::get('/api/web/me', [AuthWebController::class, 'user']);
         Route::get('/api/web/dashboard-stats', [DashboardController::class, 'stats']);
         Route::get('/api/web/users', [UserController::class, 'index']);
     });

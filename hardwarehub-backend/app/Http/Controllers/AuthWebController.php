@@ -43,8 +43,14 @@ class AuthWebController extends Controller
 
     public function user(Request $request)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'user' => null,
+            ]);
+        }
+
         return response()->json([
-            'user' => $request->user(),
+            'user' => Auth::user(),
         ]);
     }
 }
