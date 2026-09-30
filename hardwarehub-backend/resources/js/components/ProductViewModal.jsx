@@ -1,10 +1,11 @@
 import React from 'react';
-import { X, Package, Hash, DollarSign, Layers, CheckCircle2, XCircle, Calendar, Edit3, Trash2 } from 'lucide-react';
+import { X, Package, Hash, DollarSign, Layers, CheckCircle2, XCircle, Calendar, Edit3, Trash2, AlertTriangle } from 'lucide-react';
 
 export default function ProductViewModal({ isOpen, onClose, product, onEdit, onDelete }) {
     if (!isOpen || !product) return null;
 
     const isActive = product.status === 'active';
+    const isLowStock = product.quantity <= 20;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -52,6 +53,14 @@ export default function ProductViewModal({ isOpen, onClose, product, onEdit, onD
                             <span className="capitalize">{product.status}</span>
                         </span>
                     </div>
+
+                    {/* Low Stock Alert in Details */}
+                    {isLowStock && (
+                        <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center space-x-3 text-amber-300 text-xs font-bold">
+                            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
+                            <span>Low Stock Alert: Only {product.quantity} units remaining in stock. Consider reordering soon.</span>
+                        </div>
+                    )}
 
                     {/* Description */}
                     <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-1.5">

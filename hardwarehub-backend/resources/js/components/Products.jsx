@@ -12,7 +12,8 @@ import {
     RefreshCw, 
     AlertCircle,
     Check,
-    ArrowUpDown
+    AlertTriangle,
+    Flame
 } from 'lucide-react';
 import ProductFormModal from './ProductFormModal.jsx';
 import ProductViewModal from './ProductViewModal.jsx';
@@ -27,6 +28,7 @@ export default function Products() {
     // Filter and Search States
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
+    const [onlyLowStock, setOnlyLowStock] = useState(false);
 
     // Modal States
     const [formModalOpen, setFormModalOpen] = useState(false);
@@ -106,6 +108,14 @@ export default function Products() {
         fetchProducts();
     };
 
+    // Filter low stock (< 20 units threshold)
+    const lowStockThreshold = 20;
+    const lowStockCount = products.filter(p => p.quantity <= lowStockThreshold).length;
+
+    const displayedProducts = onlyLowStock
+        ? products.filter(p => p.quantity <= lowStockThreshold)
+        : products;
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -117,7 +127,7 @@ export default function Products() {
                         </div>
                         <div>
                             <h1 className="text-2xl font-bold text-white tracking-tight">Products Management</h1>
-                            <p className="text-xs text-slate-400">Inventory catalog, pricing, quantity & status management</p>
+                            <p className="text-xs text-slate-400">Inventory catalog, pricing, quantity & real-time stock alert</p>
                         </div>
                     </div>
                 </div>
@@ -142,6 +152,35 @@ export default function Products() {
                     </button>
                 </div>
             </div>
+
+            {/* Low Stock Warning Banner (if any item is below threshold) */}
+            {lowStockCount > 0 && (
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-rose-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-amber-500/5">
+                    <div className="flex items-center space-x-3">
+                        <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                            <AlertTriangle className="w-5 h-5 animate-bounce" />
+                        </div>
+                        <div>
+                            <span className="text-sm font-bold text-amber-300">
+                                Low Stock Alert: <strong className="text-white">{lowStockCount}</strong> products require restocking!
+                            </span>
+                            <p className="text-xs text-slate-400">
+                                Stock quantity is at or below {lowStockThreshold} units.
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setOnlyLowStock(!onlyLowStock)}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                            onlyLowStock
+                                ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md shadow-amber-500/20'
+                                : 'bg-slate-900/80 text-amber-400 border-amber-500/30 hover:bg-amber-500/20'
+                        }`}
+                    >
+                        {onlyLowStock ? 'Show All Products' : 'Filter Low Stock Items'}
+                    </button>
+                </div>
+            )}
 
             {/* Notification Alert */}
             {notification && (
@@ -197,7 +236,7 @@ export default function Products() {
                                 <th className="py-4 px-6">SKU</th>
                                 <th className="py-4 px-6">Product Name</th>
                                 <th className="py-4 px-6">Unit Price</th>
-                                <th className="py-4 px-6">Quantity</th>
+                                <th className="py-4 px-6">Quantity & Stock Alert</th>
                                 <th className="py-4 px-6">Status</th>
                                 <th className="py-4 px-6 text-right">Actions</th>
                             </tr>
@@ -210,7 +249,7 @@ export default function Products() {
                                         <span>Loading hardware products...</span>
                                     </td>
                                 </tr>
-                            ) : products.length === 0 ? (
+                            ) : displayedProducts.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="py-12 text-center text-slate-400">
                                         <Package className="w-8 h-8 mx-auto text-slate-600 mb-2" />
@@ -219,8 +258,10 @@ export default function Products() {
                                     </td>
                                 </tr>
                             ) : (
-                                products.map((prod) => {
+                                displayedProducts.map((prod) => {
                                     const isActive = prod.status === 'active';
+                                    const isLowStock = prod.quantity <= lowStockThreshold;
+                                    const isOutOfStock = prod.quantity <= 0;
 
                                     return (
                                         <tr key={prod.id} className="hover:bg-slate-800/40 transition-colors group">
@@ -246,15 +287,23 @@ export default function Products() {
                                                 ${parseFloat(prod.price).toFixed(2)}
                                             </td>
 
-                                            {/* Quantity */}
-                                            <td className="py-4 px-6 font-mono text-slate-300">
-                                                <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                                                    prod.quantity <= 15
-                                                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                                                        : 'bg-slate-800 text-slate-300 border border-slate-700/60'
-                                                }`}>
-                                                    {prod.quantity} in stock
-                                                </span>
+                                            {/* Quantity & Low Stock Alert Badge */}
+                                            <td className="py-4 px-6">
+                                                {isOutOfStock ? (
+                                                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                                        <XCircle className="w-3.5 h-3.5" />
+                                                        <span>Out of Stock (0)</span>
+                                                    </span>
+                                                ) : isLowStock ? (
+                                                    <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 animate-pulse">
+                                                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                                                        <span>Low Stock ({prod.quantity} left)</span>
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700/60 font-mono">
+                                                        <span>{prod.quantity} units in stock</span>
+                                                    </span>
+                                                )}
                                             </td>
 
                                             {/* Status Badge */}
@@ -310,7 +359,7 @@ export default function Products() {
 
                 {/* Table Footer Stats */}
                 <div className="p-4 bg-slate-950/60 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between">
-                    <span>Showing <strong className="text-white">{products.length}</strong> active products</span>
+                    <span>Showing <strong className="text-white">{displayedProducts.length}</strong> products {onlyLowStock && '(Filtered to Low Stock only)'}</span>
                     <span>Database: <strong className="text-emerald-400">MySQL</strong></span>
                 </div>
             </div>
