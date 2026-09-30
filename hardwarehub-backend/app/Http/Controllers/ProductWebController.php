@@ -47,13 +47,9 @@ class ProductWebController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'quantity' => ['required', 'integer', 'min:0'],
-            'low_stock_threshold' => ['nullable', 'integer', 'min:0'],
+            'low_stock_threshold' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'in:active,inactive'],
         ]);
-
-        if (!isset($validated['low_stock_threshold']) || $validated['low_stock_threshold'] === null) {
-            $validated['low_stock_threshold'] = 10;
-        }
 
         $product = Product::create($validated);
 
@@ -88,13 +84,9 @@ class ProductWebController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'quantity' => ['required', 'integer', 'min:0'],
-            'low_stock_threshold' => ['nullable', 'integer', 'min:0'],
+            'low_stock_threshold' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'in:active,inactive'],
         ]);
-
-        if (!isset($validated['low_stock_threshold']) || $validated['low_stock_threshold'] === null) {
-            $validated['low_stock_threshold'] = 10;
-        }
 
         $product->update($validated);
 
