@@ -4,6 +4,7 @@ import TopBar from './components/TopBar.jsx';
 import Login from './components/Login.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import Users from './components/Users.jsx';
+import Products from './components/Products.jsx';
 import { Loader2 } from 'lucide-react';
 
 export default function HardwareHubApp() {
@@ -122,6 +123,10 @@ export default function HardwareHubApp() {
                 <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto">
                     {activePage === 'dashboard' && (
                         <Dashboard setActivePage={setActivePage} />
+                    )}
+
+                    {activePage === 'products' && (
+                        <Products />
                     )}
 
                     {activePage === 'users' && (

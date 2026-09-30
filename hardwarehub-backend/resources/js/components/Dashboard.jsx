@@ -172,24 +172,23 @@ export default function Dashboard({ setActivePage }) {
 
                         {/* Product Management (Phase 4) */}
                         <button
-                            onClick={() => alert('Product CRUD operations will be unlocked in PHASE 4.')}
-                            className="flex items-center justify-between p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-blue-500/40 hover:bg-slate-800/40 transition-all group text-left"
+                            onClick={() => setActivePage('products')}
+                            className="flex items-center justify-between p-5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-amber-500/40 hover:bg-slate-800/40 transition-all group text-left"
                         >
                             <div className="flex items-center space-x-3.5">
-                                <div className="p-3 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                                <div className="p-3 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 group-hover:scale-110 transition-transform">
                                     <Package className="w-5 h-5" />
                                 </div>
                                 <div>
                                     <div className="flex items-center space-x-2">
-                                        <span className="font-bold text-white group-hover:text-blue-400 transition-colors text-sm">
-                                            Product CRUD
+                                        <span className="font-bold text-white group-hover:text-amber-400 transition-colors text-sm">
+                                            Products Catalogue
                                         </span>
-                                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Phase 4</span>
                                     </div>
-                                    <span className="text-xs text-slate-400">Create, edit & manage stock</span>
+                                    <span className="text-xs text-slate-400">Manage hardware products & stock</span>
                                 </div>
                             </div>
-                            <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-blue-400 transition-transform group-hover:translate-x-1" />
+                            <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-amber-400 transition-transform group-hover:translate-x-1" />
                         </button>
 
                         {/* Recycle Bin (Phase 5) */}

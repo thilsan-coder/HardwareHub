@@ -8,7 +8,6 @@ import {
     LogOut, 
     ShieldCheck, 
     ChevronRight,
-    Sparkles
 } from 'lucide-react';
 
 export default function Sidebar({ user, activePage, setActivePage, onLogout, loggingOut }) {
@@ -21,18 +20,18 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
             disabled: false,
         },
         {
+            id: 'products',
+            label: 'Products',
+            icon: Package,
+            badge: null,
+            disabled: false,
+        },
+        {
             id: 'users',
             label: 'System Users',
             icon: Users,
             badge: null,
             disabled: false,
-        },
-        {
-            id: 'products',
-            label: 'Products',
-            icon: Package,
-            badge: 'Phase 4',
-            disabled: true,
         },
         {
             id: 'recycle-bin',
