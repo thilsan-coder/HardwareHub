@@ -121,7 +121,7 @@ export default function HardwareHubApp() {
                     toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
                 />
 
-                <main className="flex-1 overflow-y-auto no-scrollbar p-6 sm:p-8 max-w-7xl w-full mx-auto">
+                <main className="flex-1 overflow-y-auto no-scrollbar p-6 sm:p-8 lg:p-10 w-full space-y-6">
                     {activePage === 'dashboard' && (
                         <Dashboard setActivePage={setActivePage} />
                     )}

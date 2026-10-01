@@ -10,7 +10,9 @@ import {
     AlertCircle,
     AlertTriangle,
     Boxes,
-    ArrowUpRight
+    ArrowUpRight,
+    TrendingUp,
+    Shield
 } from 'lucide-react';
 
 export default function Dashboard({ setActivePage }) {
@@ -69,32 +71,32 @@ export default function Dashboard({ setActivePage }) {
     const outOfStockPercent = totalProducts > 0 ? Math.round((outOfStockItems.length / totalProducts) * 100) : 0;
 
     return (
-        <div className="space-y-6">
-            {/* Top Workspace Header */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
-                <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60 text-xs font-semibold">
-                            <span>Overview</span>
+        <div className="space-y-6 w-full">
+            {/* Top Workspace Banner Header */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 lg:p-9 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
+                <div className="space-y-2">
+                    <div className="flex items-center space-x-2.5">
+                        <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70 text-xs font-semibold">
+                            <span>Overview & Diagnostics</span>
                         </span>
-                        <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-xs font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            <span>Live Database</span>
+                        <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/70 text-xs font-medium">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>All Systems Live</span>
                         </span>
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                        Store Management Dashboard
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        Store Inventory Command Center
                     </h1>
-                    <p className="text-xs text-slate-500">
-                        Real-time stock analytics, inventory thresholds, and catalog health.
+                    <p className="text-xs sm:text-sm text-slate-500 max-w-3xl">
+                        Real-time hardware stock analytics, live catalog health tracking, and automated threshold alerts.
                     </p>
                 </div>
 
-                <div className="flex items-center space-x-2.5">
+                <div className="flex items-center space-x-3">
                     <button
                         onClick={fetchStatsAndProducts}
                         disabled={loading}
-                        className="p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200/80 text-xs font-medium transition-colors shadow-xs"
+                        className="p-3 rounded-xl bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200/80 text-xs font-semibold transition-colors shadow-xs"
                         title="Refresh metrics"
                     >
                         <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
@@ -102,7 +104,7 @@ export default function Dashboard({ setActivePage }) {
 
                     <button
                         onClick={() => setActivePage('products')}
-                        className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm shadow-indigo-600/20 transition-all active:scale-95"
+                        className="flex items-center space-x-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer"
                     >
                         <Package className="w-4 h-4 stroke-[2.2]" />
                         <span>Manage Products</span>
@@ -117,114 +119,114 @@ export default function Dashboard({ setActivePage }) {
                 </div>
             )}
 
-            {/* 4-KPI Metric Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 4-KPI Metric Cards (Grand & Spacious) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 {/* Total Catalog */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs transition-all hover:border-slate-300">
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-slate-300">
                     <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-xs font-semibold uppercase tracking-wider">Total Products</span>
-                        <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                            <Package className="w-4 h-4" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Products</span>
+                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                            <Package className="w-5 h-5" />
                         </div>
                     </div>
-                    <div className="mt-3">
-                        <span className="text-2xl font-bold text-slate-900">
+                    <div className="mt-4">
+                        <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
                             {loading ? '...' : totalProducts}
                         </span>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                        <span>Active Catalog</span>
+                    <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span>Database Catalog</span>
                         <span className="font-semibold text-slate-800">{stats.active_products} active</span>
                     </div>
                 </div>
 
                 {/* Healthy Stock */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs transition-all hover:border-emerald-200">
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-emerald-200">
                     <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-xs font-semibold uppercase tracking-wider">Healthy Stock</span>
-                        <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                            <CheckCircle2 className="w-4 h-4" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Healthy Stock</span>
+                        <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                            <CheckCircle2 className="w-5 h-5" />
                         </div>
                     </div>
-                    <div className="mt-3 flex items-baseline space-x-2">
-                        <span className="text-2xl font-bold text-slate-900">
+                    <div className="mt-4 flex items-baseline space-x-2.5">
+                        <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
                             {loading ? '...' : healthyStockItems.length}
                         </span>
-                        <span className="text-xs font-medium text-emerald-600">({healthyPercent}%)</span>
+                        <span className="text-xs font-bold text-emerald-600">({healthyPercent}%)</span>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                         <span>Adequate Level</span>
-                        <span className="font-semibold text-emerald-700">Good</span>
+                        <span className="font-bold text-emerald-700">Good condition</span>
                     </div>
                 </div>
 
                 {/* Low Stock Alert */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs transition-all hover:border-amber-300">
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-amber-300">
                     <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-xs font-semibold uppercase tracking-wider">Low Stock Alerts</span>
-                        <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                            <AlertTriangle className="w-4 h-4" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-700">Low Stock Alerts</span>
+                        <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                            <AlertTriangle className="w-5 h-5" />
                         </div>
                     </div>
-                    <div className="mt-3 flex items-baseline space-x-2">
-                        <span className="text-2xl font-bold text-amber-700">
+                    <div className="mt-4 flex items-baseline space-x-2.5">
+                        <span className="text-3xl sm:text-4xl font-extrabold text-amber-700 tracking-tight">
                             {loading ? '...' : lowStockItems.length}
                         </span>
-                        <span className="text-xs font-medium text-amber-600">({lowStockPercent}%)</span>
+                        <span className="text-xs font-bold text-amber-600">({lowStockPercent}%)</span>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                         <span>Threshold ≤ Limit</span>
                         <button 
                             onClick={() => setActivePage('products')}
-                            className="font-medium text-indigo-600 hover:text-indigo-700"
+                            className="font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer"
                         >
-                            View &rarr;
+                            View Products &rarr;
                         </button>
                     </div>
                 </div>
 
                 {/* Out of Stock */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs transition-all hover:border-rose-200">
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-rose-200">
                     <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-xs font-semibold uppercase tracking-wider">Out of Stock</span>
-                        <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
-                            <XCircle className="w-4 h-4" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-rose-500">Out of Stock</span>
+                        <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                            <XCircle className="w-5 h-5" />
                         </div>
                     </div>
-                    <div className="mt-3 flex items-baseline space-x-2">
-                        <span className="text-2xl font-bold text-rose-600">
+                    <div className="mt-4 flex items-baseline space-x-2.5">
+                        <span className="text-3xl sm:text-4xl font-extrabold text-rose-600 tracking-tight">
                             {loading ? '...' : outOfStockItems.length}
                         </span>
-                        <span className="text-xs font-medium text-rose-600">({outOfStockPercent}%)</span>
+                        <span className="text-xs font-bold text-rose-600">({outOfStockPercent}%)</span>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                        <span>Depleted</span>
-                        <span className="font-semibold text-rose-600">{outOfStockItems.length > 0 ? 'Restock' : 'Zero'}</span>
+                    <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span>Inventory Depleted</span>
+                        <span className="font-bold text-rose-600">{outOfStockItems.length > 0 ? 'Restock Required' : 'Zero items'}</span>
                     </div>
                 </div>
             </div>
 
             {/* Visual Stock Ratio Segment */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-800">Inventory Distribution Ratio</span>
-                    <div className="flex items-center space-x-4 text-xs font-medium">
-                        <div className="flex items-center space-x-1.5">
-                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                            <span className="text-slate-600">Healthy ({healthyPercent}%)</span>
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                    <span className="font-bold text-slate-800 uppercase tracking-wider">Inventory Health Distribution</span>
+                    <div className="flex items-center space-x-5 text-xs font-semibold">
+                        <div className="flex items-center space-x-2">
+                            <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                            <span className="text-slate-700">Healthy ({healthyPercent}%)</span>
                         </div>
-                        <div className="flex items-center space-x-1.5">
-                            <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                            <span className="text-slate-600">Low Stock ({lowStockPercent}%)</span>
+                        <div className="flex items-center space-x-2">
+                            <span className="w-3 h-3 rounded-full bg-amber-400"></span>
+                            <span className="text-slate-700">Low Stock ({lowStockPercent}%)</span>
                         </div>
-                        <div className="flex items-center space-x-1.5">
-                            <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                            <span className="text-slate-600">Out of Stock ({outOfStockPercent}%)</span>
+                        <div className="flex items-center space-x-2">
+                            <span className="w-3 h-3 rounded-full bg-rose-500"></span>
+                            <span className="text-slate-700">Out of Stock ({outOfStockPercent}%)</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden flex">
+                <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden flex">
                     <div 
                         style={{ width: `${healthyPercent}%` }} 
                         className="h-full bg-emerald-500 transition-all duration-500" 
@@ -244,32 +246,32 @@ export default function Dashboard({ setActivePage }) {
             </div>
 
             {/* Recent Product Overview & Quick Shortcuts */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 {/* Left 2 Cols: Live Inventory Preview */}
-                <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-4">
+                <div className="xl:col-span-2 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-sm font-semibold text-slate-900">Recent Products</h2>
+                            <h2 className="text-base font-bold text-slate-900">Recent Products Catalog</h2>
                             <p className="text-xs text-slate-500">Latest catalog items with live stock metrics</p>
                         </div>
                         <button
                             onClick={() => setActivePage('products')}
-                            className="inline-flex items-center space-x-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                            className="inline-flex items-center space-x-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors cursor-pointer"
                         >
-                            <span>Open Catalog</span>
-                            <ArrowUpRight className="w-3.5 h-3.5" />
+                            <span>Open Full Catalog</span>
+                            <ArrowUpRight className="w-4 h-4" />
                         </button>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                                    <th className="py-2.5 px-3">SKU</th>
-                                    <th className="py-2.5 px-3">Product Name</th>
-                                    <th className="py-2.5 px-3">Price</th>
-                                    <th className="py-2.5 px-3">Stock Level</th>
-                                    <th className="py-2.5 px-3">Status</th>
+                                <tr className="border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <th className="py-3 px-4">SKU</th>
+                                    <th className="py-3 px-4">Product Name</th>
+                                    <th className="py-3 px-4">Price</th>
+                                    <th className="py-3 px-4">Stock Level</th>
+                                    <th className="py-3 px-4">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs">
@@ -280,38 +282,38 @@ export default function Dashboard({ setActivePage }) {
 
                                     return (
                                         <tr key={prod.id} className="hover:bg-slate-50/70 transition-colors">
-                                            <td className="py-3 px-3 font-mono text-slate-600">
+                                            <td className="py-3.5 px-4 font-mono font-semibold text-slate-700">
                                                 {prod.sku}
                                             </td>
-                                            <td className="py-3 px-3 font-medium text-slate-900">
+                                            <td className="py-3.5 px-4 font-bold text-slate-900">
                                                 {prod.name}
                                             </td>
-                                            <td className="py-3 px-3 font-medium text-slate-900">
+                                            <td className="py-3.5 px-4 font-bold text-slate-900">
                                                 ${parseFloat(prod.price).toFixed(2)}
                                             </td>
-                                            <td className="py-3 px-3">
+                                            <td className="py-3.5 px-4">
                                                 {isOutOfStock ? (
-                                                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-rose-50 text-rose-700 border border-rose-200">
+                                                    <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                                                         <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                                         <span>Out of Stock (0)</span>
                                                     </span>
                                                 ) : isLowStock ? (
-                                                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                                                    <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
                                                         <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                                         <span>Low: {prod.quantity} (≤{threshold})</span>
                                                     </span>
                                                 ) : (
-                                                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                         <span>{prod.quantity} units</span>
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="py-3 px-3">
-                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                                            <td className="py-3.5 px-4">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                                                     prod.status === 'active'
-                                                        ? 'bg-slate-100 text-slate-700'
-                                                        : 'bg-slate-50 text-slate-400'
+                                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+                                                        : 'bg-slate-100 text-slate-600 border border-slate-200'
                                                 }`}>
                                                     {prod.status}
                                                 </span>
@@ -325,53 +327,59 @@ export default function Dashboard({ setActivePage }) {
                 </div>
 
                 {/* Right 1 Col: Quick Navigation */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs space-y-4">
+                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs space-y-4">
                     <div>
-                        <h3 className="text-sm font-semibold text-slate-900">Quick Shortcuts</h3>
-                        <p className="text-xs text-slate-500">Jump directly to key modules</p>
+                        <h3 className="text-base font-bold text-slate-900">Quick Shortcuts</h3>
+                        <p className="text-xs text-slate-500">Instant access to core system modules</p>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         <button
                             onClick={() => setActivePage('products')}
-                            className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50/70 hover:bg-slate-100/80 border border-slate-200/80 transition-all text-left group"
+                            className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50/70 hover:bg-slate-100/80 border border-slate-200/80 transition-all text-left group cursor-pointer"
                         >
-                            <div className="flex items-center space-x-3">
-                                <Package className="w-4 h-4 text-indigo-600" />
+                            <div className="flex items-center space-x-3.5">
+                                <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                    <Package className="w-5 h-5" />
+                                </div>
                                 <div>
-                                    <p className="text-xs font-semibold text-slate-900 group-hover:text-indigo-600">Products Catalog</p>
-                                    <p className="text-[10px] text-slate-500">Manage all hardware products</p>
+                                    <p className="text-xs font-bold text-slate-900 group-hover:text-indigo-600">Products Catalog</p>
+                                    <p className="text-[11px] text-slate-500">Manage all hardware products</p>
                                 </div>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-transform group-hover:translate-x-0.5" />
+                            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-transform group-hover:translate-x-1" />
                         </button>
 
                         <button
                             onClick={() => setActivePage('recycle-bin')}
-                            className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50/70 hover:bg-slate-100/80 border border-slate-200/80 transition-all text-left group"
+                            className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50/70 hover:bg-slate-100/80 border border-slate-200/80 transition-all text-left group cursor-pointer"
                         >
-                            <div className="flex items-center space-x-3">
-                                <Trash2 className="w-4 h-4 text-rose-500" />
+                            <div className="flex items-center space-x-3.5">
+                                <div className="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+                                    <Trash2 className="w-5 h-5" />
+                                </div>
                                 <div>
-                                    <p className="text-xs font-semibold text-slate-900 group-hover:text-rose-600">Recycle Bin Archive</p>
-                                    <p className="text-[10px] text-slate-500">Restore or purge items</p>
+                                    <p className="text-xs font-bold text-slate-900 group-hover:text-rose-600">Recycle Bin Archive</p>
+                                    <p className="text-[11px] text-slate-500">Restore or purge items</p>
                                 </div>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-rose-600 transition-transform group-hover:translate-x-0.5" />
+                            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-rose-600 transition-transform group-hover:translate-x-1" />
                         </button>
 
                         <button
                             onClick={() => setActivePage('users')}
-                            className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50/70 hover:bg-slate-100/80 border border-slate-200/80 transition-all text-left group"
+                            className="w-full flex items-center justify-between p-4 rounded-xl bg-slate-50/70 hover:bg-slate-100/80 border border-slate-200/80 transition-all text-left group cursor-pointer"
                         >
-                            <div className="flex items-center space-x-3">
-                                <Users className="w-4 h-4 text-slate-700" />
+                            <div className="flex items-center space-x-3.5">
+                                <div className="w-9 h-9 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
+                                    <Users className="w-5 h-5" />
+                                </div>
                                 <div>
-                                    <p className="text-xs font-semibold text-slate-900 group-hover:text-indigo-600">System Users</p>
-                                    <p className="text-[10px] text-slate-500">Accounts & permissions</p>
+                                    <p className="text-xs font-bold text-slate-900 group-hover:text-indigo-600">System Users</p>
+                                    <p className="text-[11px] text-slate-500">Accounts & permissions</p>
                                 </div>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-transform group-hover:translate-x-0.5" />
+                            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-transform group-hover:translate-x-1" />
                         </button>
                     </div>
                 </div>
