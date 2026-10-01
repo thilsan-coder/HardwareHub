@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
 import '../models/product_model.dart';
+import '../models/stock_movement_model.dart';
 import '../services/product_service.dart';
 import '../services/stock_movement_service.dart';
 
 class StockMovementFormScreen extends StatefulWidget {
   final int? initialProductId;
+  final StockMovementModel? movement;
 
-  const StockMovementFormScreen({super.key, this.initialProductId});
+  const StockMovementFormScreen({
+    super.key,
+    this.initialProductId,
+    this.movement,
+  });
 
   @override
   State<StockMovementFormScreen> createState() => _StockMovementFormScreenState();
@@ -20,16 +26,24 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
 
   List<ProductModel> _products = [];
   ProductModel? _selectedProduct;
-  String _type = 'in'; // 'in', 'out', 'adjustment', 'damage'
-  final TextEditingController _quantityController = TextEditingController(text: '1');
-  final TextEditingController _reasonController = TextEditingController();
+  late String _type; // 'in', 'out', 'adjustment', 'damage'
+  late TextEditingController _quantityController;
+  late TextEditingController _reasonController;
 
   bool _isLoadingProducts = true;
   bool _isSubmitting = false;
 
+  bool get isEdit => widget.movement != null;
+
   @override
   void initState() {
     super.initState();
+    final m = widget.movement;
+    _type = m?.type ?? 'in';
+    _quantityController = TextEditingController(
+      text: m != null ? m.quantityChanged.abs().toString() : '1',
+    );
+    _reasonController = TextEditingController(text: m?.reason ?? '');
     _loadProducts();
   }
 
@@ -47,7 +61,12 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
       if (mounted) {
         setState(() {
           _products = items;
-          if (widget.initialProductId != null) {
+          if (widget.movement != null && widget.movement!.product != null) {
+            _selectedProduct = items.firstWhere(
+              (p) => p.id == widget.movement!.product!.id,
+              orElse: () => items.first,
+            );
+          } else if (widget.initialProductId != null) {
             _selectedProduct = items.firstWhere(
               (p) => p.id == widget.initialProductId,
               orElse: () => items.first,
@@ -66,14 +85,23 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
   int get anticipatedNewStock {
     if (_selectedProduct == null) return 0;
     final qty = int.tryParse(_quantityController.text.trim()) ?? 0;
-    final current = _selectedProduct!.quantity;
+    int baseStock = _selectedProduct!.quantity;
+
+    if (isEdit && widget.movement != null && widget.movement!.product?.id == _selectedProduct!.id) {
+      if (widget.movement!.type == 'in') {
+        baseStock = (baseStock - widget.movement!.quantityChanged.abs()).clamp(0, 999999).toInt();
+      } else if (widget.movement!.type == 'out' || widget.movement!.type == 'damage') {
+        baseStock += widget.movement!.quantityChanged.abs();
+      } else if (widget.movement!.type == 'adjustment') {
+        baseStock = widget.movement!.previousStock;
+      }
+    }
 
     if (_type == 'in') {
-      return current + qty;
+      return baseStock + qty;
     } else if (_type == 'out' || _type == 'damage') {
-      return (current - qty).clamp(0, 999999);
+      return (baseStock - qty).clamp(0, 999999).toInt();
     } else {
-      // adjustment replaces quantity or offsets
       return qty;
     }
   }
@@ -82,10 +110,20 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
     if (!_formKey.currentState!.validate() || _selectedProduct == null) return;
 
     final qty = int.tryParse(_quantityController.text.trim()) ?? 0;
-    if (_type == 'out' && qty > _selectedProduct!.quantity) {
+
+    int effectiveAvailable = _selectedProduct!.quantity;
+    if (isEdit && widget.movement != null && widget.movement!.product?.id == _selectedProduct!.id) {
+      if (widget.movement!.type == 'out' || widget.movement!.type == 'damage') {
+        effectiveAvailable += widget.movement!.quantityChanged.abs();
+      } else if (widget.movement!.type == 'in') {
+        effectiveAvailable = (effectiveAvailable - widget.movement!.quantityChanged.abs()).clamp(0, 999999).toInt();
+      }
+    }
+
+    if ((_type == 'out' || _type == 'damage') && qty > effectiveAvailable) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Cannot dispatch $qty units! Current stock is only ${_selectedProduct!.quantity}.'),
+          content: Text('Cannot dispatch $qty units! Available stock is only $effectiveAvailable.'),
           backgroundColor: AppTheme.danger,
         ),
       );
@@ -97,18 +135,22 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
     final payload = {
       'product_id': _selectedProduct!.id,
       'type': _type,
+      'quantity': qty,
       'quantity_changed': qty,
       'reason': _reasonController.text.trim().isEmpty ? 'Manual stock update' : _reasonController.text.trim(),
     };
 
     try {
-      final res = await _movementService.createStockMovement(payload);
+      final res = isEdit
+          ? await _movementService.updateStockMovement(widget.movement!.id, payload)
+          : await _movementService.createStockMovement(payload);
+
       if (mounted) {
         setState(() => _isSubmitting = false);
         if (res.success) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(res.message ?? 'Stock movement recorded successfully'),
+              content: Text(res.message ?? (isEdit ? 'Stock movement updated successfully' : 'Stock movement recorded successfully')),
               backgroundColor: AppTheme.success,
             ),
           );
@@ -140,7 +182,7 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
     return Scaffold(
       backgroundColor: AppTheme.slate50,
       appBar: AppBar(
-        title: const Text('Log Stock Movement'),
+        title: Text(isEdit ? 'Edit Stock Movement' : 'Log Stock Movement'),
       ),
       body: _isLoadingProducts
           ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
@@ -298,10 +340,13 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.save_rounded, size: 20),
-                                SizedBox(width: 8),
-                                Text('Commit Stock Movement', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                              children: [
+                                const Icon(Icons.save_rounded, size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  isEdit ? 'Update Movement & Stock' : 'Commit Stock Movement',
+                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                                ),
                               ],
                             ),
                     ),

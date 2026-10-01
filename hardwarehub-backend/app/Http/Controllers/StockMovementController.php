@@ -104,6 +104,11 @@ class StockMovementController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Support both quantity and quantity_changed from mobile/web
+        if (! $request->has('quantity') && $request->has('quantity_changed')) {
+            $request->merge(['quantity' => abs((int) $request->input('quantity_changed'))]);
+        }
+
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'type' => ['required', Rule::in(['in', 'out', 'adjustment', 'damage'])],
@@ -190,25 +195,77 @@ class StockMovementController extends Controller
     }
 
     /**
-     * Update stock movement reason or reference note.
+     * Update stock movement (Product, Type, Quantity, and Reason) with inventory reconciliation.
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        $movement = StockMovement::with(['product', 'user'])->findOrFail($id);
+        if (! $request->has('quantity') && $request->has('quantity_changed')) {
+            $request->merge(['quantity' => abs((int) $request->input('quantity_changed'))]);
+        }
 
         $validated = $request->validate([
-            'reason' => 'required|string|max:500',
+            'product_id' => 'sometimes|required|exists:products,id',
+            'type' => ['sometimes', 'required', Rule::in(['in', 'out', 'adjustment', 'damage'])],
+            'quantity' => 'sometimes|required|integer|min:1',
+            'reason' => 'nullable|string|max:500',
         ]);
 
-        $movement->update([
-            'reason' => trim($validated['reason']),
-        ]);
+        return DB::transaction(function () use ($validated, $id, $request) {
+            $movement = StockMovement::findOrFail($id);
+            $oldProduct = Product::lockForUpdate()->find($movement->product_id);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Stock movement reference notes updated successfully.',
-            'movement' => $movement,
-        ]);
+            // Revert old movement first
+            if ($oldProduct) {
+                if ($movement->type === 'in') {
+                    $oldProduct->quantity = max(0, $oldProduct->quantity - abs($movement->quantity_changed));
+                } elseif ($movement->type === 'out' || $movement->type === 'damage') {
+                    $oldProduct->quantity = $oldProduct->quantity + abs($movement->quantity_changed);
+                } elseif ($movement->type === 'adjustment') {
+                    $oldProduct->quantity = max(0, $movement->previous_stock);
+                }
+                $oldProduct->save();
+            }
+
+            $newProductId = $validated['product_id'] ?? $movement->product_id;
+            $newType = $validated['type'] ?? $movement->type;
+            $newQty = isset($validated['quantity']) ? (int) $validated['quantity'] : abs($movement->quantity_changed);
+            $newReason = array_key_exists('reason', $validated) ? ($validated['reason'] ?? 'Manual stock update') : $movement->reason;
+
+            $targetProduct = ($oldProduct && $oldProduct->id == $newProductId)
+                ? $oldProduct->fresh()
+                : Product::lockForUpdate()->findOrFail($newProductId);
+
+            $previousStock = $targetProduct->quantity;
+
+            if ($newType === 'in') {
+                $quantityChanged = +$newQty;
+                $newStock = $previousStock + $newQty;
+            } elseif ($newType === 'out' || $newType === 'damage') {
+                $quantityChanged = -$newQty;
+                $newStock = max(0, $previousStock - $newQty);
+            } else { // adjustment
+                $newStock = $newQty;
+                $quantityChanged = $newStock - $previousStock;
+            }
+
+            $targetProduct->update(['quantity' => $newStock]);
+
+            $movement->update([
+                'product_id' => $targetProduct->id,
+                'type' => $newType,
+                'quantity_changed' => $quantityChanged,
+                'previous_stock' => $previousStock,
+                'new_stock' => $newStock,
+                'reason' => $newReason,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Stock movement updated successfully.',
+                'movement' => $movement->load(['product', 'user']),
+                'product' => $targetProduct->fresh(),
+            ]);
+        });
     }
 
     /**

@@ -25,10 +25,11 @@ class StockMovementService {
 
     final res = await _api.get('/stock-movements$queryString');
 
-    if (res.success && res.data != null && res.data['data'] is List) {
-      return (res.data['data'] as List)
-          .map((item) => StockMovementModel.fromJson(item))
-          .toList();
+    if (res.success && res.data != null) {
+      final list = res.data['movements'] ?? res.data['data'] ?? (res.data is List ? res.data : null);
+      if (list is List) {
+        return list.map((item) => StockMovementModel.fromJson(item)).toList();
+      }
     }
     return [];
   }
@@ -65,10 +66,11 @@ class StockMovementService {
 
     final res = await _api.get('/recycle-bin/stock-movements$queryString');
 
-    if (res.success && res.data != null && res.data['movements'] is List) {
-      return (res.data['movements'] as List)
-          .map((item) => StockMovementModel.fromJson(item))
-          .toList();
+    if (res.success && res.data != null) {
+      final list = res.data['movements'] ?? res.data['data'] ?? (res.data is List ? res.data : null);
+      if (list is List) {
+        return list.map((item) => StockMovementModel.fromJson(item)).toList();
+      }
     }
     return [];
   }

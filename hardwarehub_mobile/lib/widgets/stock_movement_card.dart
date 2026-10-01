@@ -77,53 +77,60 @@ class StockMovementCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: typeBg,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: typeColor.withAlpha(80), width: 1),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: typeBg,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: typeColor.withAlpha(80), width: 1),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(typeIcon, color: typeColor, size: 12),
+                                const SizedBox(width: 4),
+                                Text(
+                                  typeLabel,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.5,
+                                    color: typeColor,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(typeIcon, color: typeColor, size: 12),
-                              const SizedBox(width: 4),
-                              Text(
-                                typeLabel,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.5,
-                                  color: typeColor,
+                          if (product != null) ...[
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.slate100,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  product.sku,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.slate700,
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        if (product != null) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppTheme.slate100,
-                              borderRadius: BorderRadius.circular(6),
                             ),
-                            child: Text(
-                              product.sku,
-                              style: const TextStyle(
-                                fontFamily: 'monospace',
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.slate700,
-                              ),
-                            ),
-                          ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
+                    const SizedBox(width: 6),
                     Text(
                       movement.createdAt,
                       style: const TextStyle(
@@ -187,7 +194,6 @@ class StockMovementCard extends StatelessWidget {
                     border: Border.all(color: AppTheme.slate200, width: 0.8),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Audit Trail: ${movement.previousStock} → ${movement.newStock} units',
@@ -197,11 +203,16 @@ class StockMovementCard extends StatelessWidget {
                           color: AppTheme.slate700,
                         ),
                       ),
-                      Text(
-                        'By: ${movement.userName ?? 'Admin'}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppTheme.slate500,
+                      const Spacer(),
+                      Flexible(
+                        child: Text(
+                          'By: ${movement.userName ?? 'Admin'}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.slate500,
+                          ),
                         ),
                       ),
                     ],

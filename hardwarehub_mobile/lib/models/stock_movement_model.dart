@@ -75,7 +75,9 @@ class StockMovementModel {
       product: json['product'] != null && json['product'] is Map<String, dynamic>
           ? StockMovementProduct.fromJson(json['product'])
           : null,
-      userName: json['user'] != null && json['user'] is Map ? json['user']['name'] : 'Admin',
+      userName: json['user'] != null && json['user'] is Map
+          ? json['user']['name']
+          : (json['user_name'] ?? (json['user'] is String ? json['user'] : 'Admin')),
       deletedAt: json['deleted_at'],
     );
   }

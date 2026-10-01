@@ -15,11 +15,11 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isCategory) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: AppTheme.primary.withAlpha(35),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppTheme.primary.withAlpha(80), width: 1),
+          color: const Color(0xFFEEF2FF), // Indigo 50
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: const Color(0xFFC7D2FE), width: 0.8), // Indigo 200
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -28,18 +28,18 @@ class StatusBadge extends StatelessWidget {
               width: 5,
               height: 5,
               decoration: const BoxDecoration(
-                color: AppTheme.primaryLight,
+                color: Color(0xFF4F46E5), // Indigo 600
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 5),
             Text(
               status.toUpperCase(),
               style: const TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
-                letterSpacing: 0.6,
-                color: AppTheme.primaryLight,
+                letterSpacing: 0.5,
+                color: Color(0xFF4338CA), // Indigo 700
               ),
             ),
           ],

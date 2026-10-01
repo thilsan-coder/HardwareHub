@@ -219,44 +219,6 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Low Stock Alert Banner (if any)
-            if (stats.lowStockCount > 0 || stats.outOfStockCount > 0) ...[
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppTheme.warningBg,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppTheme.warningBorder),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.warning_amber_rounded, color: Color(0xFFB45309), size: 24),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Stock Replenishment Required',
-                            style: TextStyle(
-                              color: Color(0xFF9A3412),
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
-                            ),
-                          ),
-                          Text(
-                            '${stats.lowStockCount} items below threshold, ${stats.outOfStockCount} items out of stock.',
-                            style: const TextStyle(color: Color(0xFFB45309), fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-
             // 4 Stat Cards
             const Text(
               'INVENTORY METRICS',
@@ -573,6 +535,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     return Scaffold(
       backgroundColor: AppTheme.slate50,
       appBar: AppBar(
+        titleSpacing: 12,
         title: Row(
           children: [
             Container(
@@ -583,8 +546,14 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               ),
               child: const Icon(Icons.inventory_2_rounded, color: Colors.white, size: 16),
             ),
-            const SizedBox(width: 10),
-            Text(titles[_currentBottomNavIndex]),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                titles[_currentBottomNavIndex],
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+            ),
           ],
         ),
         actions: [
@@ -594,17 +563,17 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             onPressed: _showServerConfigDialog,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.only(right: 4),
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.white.withAlpha(20),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   _currentTime,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: Colors.white),
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: Colors.white),
                 ),
               ),
             ),

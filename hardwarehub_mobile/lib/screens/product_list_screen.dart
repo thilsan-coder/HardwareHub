@@ -108,16 +108,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgDark,
+      backgroundColor: AppTheme.slate50,
       floatingActionButton: Container(
         decoration: BoxDecoration(
           gradient: AppTheme.primaryGradient,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.primary.withAlpha(150),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
+              color: AppTheme.primary.withAlpha(120),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -134,64 +134,112 @@ class _ProductListScreenState extends State<ProductListScreen> {
       ),
       body: Column(
         children: [
-          // Search and Filters Header
+          // Sleek Minimalist Search and Filters Header
           Container(
-            color: AppTheme.bgSurface,
+            color: Colors.white,
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             child: Column(
               children: [
-                // Search Input with Glowing Dark Input
-                TextField(
-                  controller: _searchController,
-                  onChanged: _onSearchChanged,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
-                  decoration: InputDecoration(
-                    hintText: 'Search by product name, SKU...',
-                    prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primaryLight, size: 20),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear_rounded, color: AppTheme.textMuted, size: 18),
-                            onPressed: () {
-                              _searchController.clear();
-                              _onSearchChanged('');
-                            },
-                          )
-                        : null,
-                  ),
+                // Row 1: Unified Search Input + Status Filter Button
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.slate50,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppTheme.slate200),
+                        ),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _onSearchChanged,
+                          style: const TextStyle(color: AppTheme.slate900, fontSize: 13, fontWeight: FontWeight.w600),
+                          decoration: InputDecoration(
+                            hintText: 'Search products by name, SKU...',
+                            hintStyle: const TextStyle(color: AppTheme.slate400, fontSize: 13, fontWeight: FontWeight.w500),
+                            prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.slate400, size: 18),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.close_rounded, color: AppTheme.slate500, size: 16),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _onSearchChanged('');
+                                    },
+                                  )
+                                : null,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Quick Status Filter Menu Button
+                    PopupMenuButton<String>(
+                      initialValue: _selectedStatus,
+                      onSelected: (val) {
+                        setState(() => _selectedStatus = val);
+                        _loadProducts();
+                      },
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      color: Colors.white,
+                      elevation: 4,
+                      itemBuilder: (context) => [
+                        _buildStatusMenuItem('All', 'All Statuses', Icons.all_inclusive_rounded),
+                        _buildStatusMenuItem('Active', 'Active Only', Icons.check_circle_outline_rounded),
+                        _buildStatusMenuItem('Inactive', 'Inactive Only', Icons.pause_circle_outline_rounded),
+                      ],
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: _selectedStatus == 'All' ? AppTheme.slate50 : AppTheme.primary.withAlpha(25),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: _selectedStatus == 'All' ? AppTheme.slate200 : AppTheme.primary,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.tune_rounded,
+                              size: 16,
+                              color: _selectedStatus == 'All' ? AppTheme.slate700 : AppTheme.primary,
+                            ),
+                            if (_selectedStatus != 'All') ...[
+                              const SizedBox(width: 6),
+                              Text(
+                                _selectedStatus,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.primary,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
-                // Category Filter Chips
+                // Row 2: Sleek Horizontal Category Scroll Pills
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   child: Row(
                     children: [
-                      _buildCategoryChip('All', _selectedCategory == 'All'),
+                      _buildCategoryChip('All Categories', _selectedCategory == 'All'),
                       ...AppConstants.categories.map((cat) {
                         return _buildCategoryChip(cat, _selectedCategory == cat);
                       }),
                     ],
                   ),
-                ),
-                const SizedBox(height: 10),
-
-                // Status Segment Chips
-                Row(
-                  children: [
-                    const Text(
-                      'STATUS: ',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.8,
-                        color: AppTheme.textDim,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildStatusChip('All', _selectedStatus == 'All'),
-                    _buildStatusChip('Active', _selectedStatus == 'Active'),
-                    _buildStatusChip('Inactive', _selectedStatus == 'Inactive'),
-                  ],
                 ),
               ],
             ),
@@ -201,8 +249,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: const BoxDecoration(
-              color: AppTheme.bgDark,
-              border: Border(bottom: BorderSide(color: AppTheme.borderSlate, width: 0.8)),
+              color: AppTheme.slate100,
+              border: Border(
+                top: BorderSide(color: AppTheme.slate200, width: 0.8),
+                bottom: BorderSide(color: AppTheme.slate200, width: 0.8),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -213,7 +264,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.6,
-                    color: AppTheme.textMuted,
+                    color: AppTheme.slate700,
                   ),
                 ),
                 if (_selectedCategory != 'All' || _selectedStatus != 'All' || _searchQuery.isNotEmpty)
@@ -232,7 +283,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
-                        color: AppTheme.primaryLight,
+                        color: AppTheme.primary,
                       ),
                     ),
                   ),
@@ -243,13 +294,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
           // Product List view
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: AppTheme.primaryLight))
+                ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
                 : _products.isEmpty
                     ? _buildEmptyState()
                     : RefreshIndicator(
                         onRefresh: _loadProducts,
-                        color: AppTheme.primaryLight,
-                        backgroundColor: AppTheme.bgCard,
+                        color: AppTheme.primary,
+                        backgroundColor: Colors.white,
                         child: ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 14, 16, 80),
                           itemCount: _products.length,
@@ -269,29 +320,30 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Widget _buildCategoryChip(String label, bool isSelected) {
+    final catKey = label == 'All Categories' ? 'All' : label;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: GestureDetector(
         onTap: () {
-          setState(() => _selectedCategory = label);
+          setState(() => _selectedCategory = catKey);
           _loadProducts();
         },
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            gradient: isSelected ? AppTheme.primaryGradient : null,
-            color: isSelected ? null : AppTheme.bgCard,
-            borderRadius: BorderRadius.circular(10),
+            color: isSelected ? AppTheme.slate900 : Colors.white,
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? Colors.transparent : AppTheme.borderSlate,
+              color: isSelected ? AppTheme.slate900 : AppTheme.slate200,
               width: 1,
             ),
             boxShadow: isSelected
-                ? [
+                ? const [
                     BoxShadow(
-                      color: AppTheme.primary.withAlpha(100),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
+                      color: Color(0x18000000),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
                     ),
                   ]
                 : null,
@@ -301,7 +353,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-              color: isSelected ? Colors.white : AppTheme.textMuted,
+              color: isSelected ? Colors.white : AppTheme.slate700,
             ),
           ),
         ),
@@ -309,33 +361,31 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  Widget _buildStatusChip(String label, bool isSelected) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: GestureDetector(
-        onTap: () {
-          setState(() => _selectedStatus = label);
-          _loadProducts();
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: isSelected ? AppTheme.textWhite : AppTheme.bgCard,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? AppTheme.textWhite : AppTheme.borderSlate,
-              width: 1,
-            ),
+  PopupMenuItem<String> _buildStatusMenuItem(String value, String title, IconData icon) {
+    final isSelected = _selectedStatus == value;
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isSelected ? AppTheme.primary : AppTheme.slate500,
           ),
-          child: Text(
-            label,
+          const SizedBox(width: 10),
+          Text(
+            title,
             style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              color: isSelected ? AppTheme.bgDark : AppTheme.textMuted,
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+              color: isSelected ? AppTheme.primary : AppTheme.slate800,
             ),
           ),
-        ),
+          if (isSelected) ...[
+            const Spacer(),
+            const Icon(Icons.check_rounded, size: 16, color: AppTheme.primary),
+          ],
+        ],
       ),
     );
   }
@@ -350,14 +400,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
             Container(
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: AppTheme.bgCard,
+                color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.borderSlate),
+                border: Border.all(color: AppTheme.slate200),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x06000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 2),
+                  ),
+                ],
               ),
               child: const Icon(
-                Icons.search_off_rounded,
+                Icons.inventory_2_outlined,
                 size: 48,
-                color: AppTheme.textMuted,
+                color: AppTheme.slate400,
               ),
             ),
             const SizedBox(height: 20),
@@ -366,7 +423,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: AppTheme.textWhite,
+                color: AppTheme.slate900,
               ),
             ),
             const SizedBox(height: 8),
@@ -375,7 +432,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: AppTheme.textDim,
+                color: AppTheme.slate500,
                 height: 1.4,
               ),
             ),

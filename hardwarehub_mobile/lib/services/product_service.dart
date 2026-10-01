@@ -31,10 +31,11 @@ class ProductService {
 
     final res = await _api.get('/products$queryString');
 
-    if (res.success && res.data != null && res.data['products'] is List) {
-      return (res.data['products'] as List)
-          .map((item) => ProductModel.fromJson(item))
-          .toList();
+    if (res.success && res.data != null) {
+      final list = res.data['data'] ?? res.data['products'] ?? (res.data is List ? res.data : null);
+      if (list is List) {
+        return list.map((item) => ProductModel.fromJson(item)).toList();
+      }
     }
     return [];
   }
@@ -42,8 +43,11 @@ class ProductService {
   // 3. Get Single Product
   Future<ProductModel?> getProduct(int id) async {
     final res = await _api.get('/products/$id');
-    if (res.success && res.data != null && res.data['product'] != null) {
-      return ProductModel.fromJson(res.data['product']);
+    if (res.success && res.data != null) {
+      final obj = res.data['data'] ?? res.data['product'] ?? (res.data is Map ? res.data : null);
+      if (obj != null && obj is Map<String, dynamic>) {
+        return ProductModel.fromJson(obj);
+      }
     }
     return null;
   }
@@ -71,10 +75,11 @@ class ProductService {
 
     final res = await _api.get('/recycle-bin$queryString');
 
-    if (res.success && res.data != null && res.data['products'] is List) {
-      return (res.data['products'] as List)
-          .map((item) => ProductModel.fromJson(item))
-          .toList();
+    if (res.success && res.data != null) {
+      final list = res.data['products'] ?? res.data['data'] ?? (res.data is List ? res.data : null);
+      if (list is List) {
+        return list.map((item) => ProductModel.fromJson(item)).toList();
+      }
     }
     return [];
   }

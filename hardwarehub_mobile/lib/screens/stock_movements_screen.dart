@@ -76,6 +76,65 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
     }
   }
 
+  void _navigateToEdit(StockMovementModel m) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => StockMovementFormScreen(movement: m),
+      ),
+    );
+    if (result == true) {
+      _loadMovements();
+    }
+  }
+
+  void _confirmDeleteMovement(StockMovementModel m) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: const [
+            Icon(Icons.delete_sweep_rounded, color: AppTheme.danger, size: 22),
+            SizedBox(width: 8),
+            Text('Move to Recycle Bin?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.slate900)),
+          ],
+        ),
+        content: Text(
+          'Voiding this "${m.type.toUpperCase()}" movement will safely move it to the Recycle Bin and automatically revert the product stock balance. Proceed?',
+          style: const TextStyle(fontSize: 13, color: AppTheme.slate600, height: 1.4),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppTheme.slate600)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final res = await _movementService.deleteStockMovement(m.id);
+              if (mounted) {
+                if (res.success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Stock movement moved to Recycle Bin & balance reverted'), backgroundColor: AppTheme.success),
+                  );
+                  _loadMovements();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(res.message ?? 'Failed to delete movement'), backgroundColor: AppTheme.danger),
+                  );
+                }
+              }
+            },
+            child: const Text('Void & Move to Bin'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showDetailModal(StockMovementModel m) {
     showModalBottomSheet(
       context: context,
@@ -102,7 +161,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
             _buildDetailRow('Product', m.product?.name ?? 'Unknown'),
             _buildDetailRow('SKU', m.product?.sku ?? 'N/A'),
             _buildDetailRow('Movement Type', m.type.toUpperCase()),
@@ -112,14 +171,43 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
             _buildDetailRow('Recorded By', m.userName ?? 'Admin'),
             _buildDetailRow('Timestamp', m.createdAt),
             _buildDetailRow('Reason / Memo', m.reason),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Close'),
-              ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _navigateToEdit(m);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: AppTheme.primary),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.edit_rounded, size: 18, color: AppTheme.primary),
+                    label: const Text('Edit Movement', style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.primary)),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      _confirmDeleteMovement(m);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: AppTheme.danger),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.delete_outline_rounded, size: 18, color: AppTheme.danger),
+                    label: const Text('Move to Bin', style: TextStyle(fontWeight: FontWeight.w700, color: AppTheme.danger)),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 10),
           ],
         ),
       ),
@@ -128,7 +216,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -252,25 +340,41 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
   Widget _buildTypeChip(String label) {
     final isSelected = _selectedType.toLowerCase() == label.toLowerCase();
     return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: FilterChip(
-        label: Text(label),
-        selected: isSelected,
-        onSelected: (val) {
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: () {
           setState(() => _selectedType = label);
           _loadMovements();
         },
-        selectedColor: AppTheme.primary.withAlpha(35),
-        checkmarkColor: AppTheme.primary,
-        labelStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-          color: isSelected ? AppTheme.primary : AppTheme.slate700,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.slate900 : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? AppTheme.slate900 : AppTheme.slate200,
+              width: 1,
+            ),
+            boxShadow: isSelected
+                ? const [
+                    BoxShadow(
+                      color: Color(0x18000000),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+              color: isSelected ? Colors.white : AppTheme.slate700,
+            ),
+          ),
         ),
-        backgroundColor: AppTheme.slate100,
-        side: BorderSide(color: isSelected ? AppTheme.primary : Colors.transparent),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

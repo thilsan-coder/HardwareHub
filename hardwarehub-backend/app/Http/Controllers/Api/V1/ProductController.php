@@ -26,6 +26,13 @@ class ProductController extends Controller
             });
         }
 
+        // Category Filter
+        if ($category = $request->query('category')) {
+            if (strtolower($category) !== 'all') {
+                $query->where('category', $category);
+            }
+        }
+
         // Status Filter
         if ($status = $request->query('status')) {
             if (in_array($status, ['active', 'inactive'])) {
@@ -126,6 +133,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'sku' => 'required|string|max:50|unique:products,sku',
             'description' => 'nullable|string|max:1000',
+            'category' => 'nullable|string|max:100',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'low_stock_threshold' => 'required|integer|min:0',
@@ -161,6 +169,7 @@ class ProductController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'sku' => ['sometimes', 'required', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($product->id)],
             'description' => 'nullable|string|max:1000',
+            'category' => 'nullable|string|max:100',
             'price' => 'sometimes|required|numeric|min:0',
             'quantity' => 'sometimes|required|integer|min:0',
             'low_stock_threshold' => 'sometimes|required|integer|min:0',
@@ -266,6 +275,7 @@ class ProductController extends Controller
             'name' => $product->name,
             'sku' => $product->sku,
             'description' => $product->description,
+            'category' => $product->category ?? 'General',
             'price' => (float) $product->price,
             'price_formatted' => '$'.number_format((float) $product->price, 2),
             'quantity' => (int) $quantity,

@@ -58,8 +58,8 @@ Route::prefix('v1')->group(function () {
         Route::delete('/recycle-bin/{id}/force-delete', [RecycleBinController::class, 'forceDelete'])->name('api.v1.recycle_bin.force_delete');
 
         // Mobile Recycle Bin (Stock Movements)
-        Route::get('/recycle-bin/stock-movements', [RecycleBinWebController::class, 'stockMovementsIndex'])->name('api.v1.recycle_bin.stock_movements.index');
-        Route::post('/recycle-bin/stock-movements/{id}/restore', [RecycleBinWebController::class, 'restoreStockMovement'])->name('api.v1.recycle_bin.stock_movements.restore');
-        Route::delete('/recycle-bin/stock-movements/{id}/force-delete', [RecycleBinWebController::class, 'forceDeleteStockMovement'])->name('api.v1.recycle_bin.stock_movements.force_delete');
+        Route::get('/recycle-bin/stock-movements', [RecycleBinController::class, 'stockMovementsIndex'])->name('api.v1.recycle_bin.stock_movements.index');
+        Route::post('/recycle-bin/stock-movements/{id}/restore', [RecycleBinController::class, 'restoreMovement'])->name('api.v1.recycle_bin.stock_movements.restore');
+        Route::delete('/recycle-bin/stock-movements/{id}/force-delete', [RecycleBinController::class, 'forceDeleteMovement'])->name('api.v1.recycle_bin.stock_movements.force_delete');
     });
 });

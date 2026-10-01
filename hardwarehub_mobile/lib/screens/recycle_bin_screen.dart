@@ -42,17 +42,27 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> with SingleTickerPr
   Future<void> _loadAllRecycleData() async {
     setState(() => _isLoading = true);
     try {
-      final products = await _productService.getRecycleBinProducts(search: _searchQuery);
-      final movements = await _movementService.getRecycleBinStockMovements(search: _searchQuery);
+      final results = await Future.wait([
+        _productService.getRecycleBinProducts(search: _searchQuery),
+        _movementService.getRecycleBinStockMovements(search: _searchQuery),
+      ]);
       if (mounted) {
         setState(() {
-          _deletedProducts = products;
-          _deletedMovements = movements;
+          _deletedProducts = results[0] as List<ProductModel>;
+          _deletedMovements = results[1] as List<StockMovementModel>;
           _isLoading = false;
         });
       }
-    } catch (_) {
-      if (mounted) setState(() => _isLoading = false);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load recycle bin: $e'),
+            backgroundColor: AppTheme.danger,
+          ),
+        );
+      }
     }
   }
 

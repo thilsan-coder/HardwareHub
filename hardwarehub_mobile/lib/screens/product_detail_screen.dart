@@ -66,26 +66,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.bgCard,
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppTheme.borderSlate),
+          side: const BorderSide(color: AppTheme.slate200),
         ),
         title: Row(
           children: const [
             Icon(Icons.delete_sweep_rounded, color: AppTheme.danger, size: 24),
             SizedBox(width: 8),
-            Text('Move to Recycle Bin?', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 17)),
+            Text('Move to Recycle Bin?', style: TextStyle(color: AppTheme.slate900, fontWeight: FontWeight.w800, fontSize: 17)),
           ],
         ),
         content: Text(
           'Are you sure you want to delete "${_product?.name}"? It will be safely moved to the Recycle Bin and can be restored at any time.',
-          style: const TextStyle(fontSize: 13, color: AppTheme.textMuted, height: 1.4),
+          style: const TextStyle(fontSize: 13, color: AppTheme.slate600, height: 1.4),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.textMuted)),
+            child: const Text('Cancel', style: TextStyle(color: AppTheme.slate600)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -145,15 +145,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: AppTheme.bgDark,
+        backgroundColor: AppTheme.slate50,
         appBar: AppBar(title: const Text('Product Details')),
-        body: const Center(child: CircularProgressIndicator(color: AppTheme.primaryLight)),
+        body: const Center(child: CircularProgressIndicator(color: AppTheme.primary)),
       );
     }
 
     if (_product == null) {
       return Scaffold(
-        backgroundColor: AppTheme.bgDark,
+        backgroundColor: AppTheme.slate50,
         appBar: AppBar(title: const Text('Product Details')),
         body: Center(
           child: Column(
@@ -161,7 +161,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             children: [
               const Icon(Icons.error_outline_rounded, size: 48, color: AppTheme.danger),
               const SizedBox(height: 12),
-              const Text('Product not found or has been removed.', style: TextStyle(color: AppTheme.textMuted)),
+              const Text('Product not found or has been removed.', style: TextStyle(color: AppTheme.slate600)),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
@@ -179,12 +179,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final stockProgress = p.quantity > 50 ? 1.0 : (p.quantity / 50.0).clamp(0.0, 1.0);
 
     return Scaffold(
-      backgroundColor: AppTheme.bgDark,
+      backgroundColor: AppTheme.slate50,
       appBar: AppBar(
         title: Text(p.name, overflow: TextOverflow.ellipsis),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit_outlined, color: AppTheme.textMuted),
+            icon: const Icon(Icons.edit_outlined, color: Colors.white),
             tooltip: 'Edit SKU',
             onPressed: _navigateToEdit,
           ),
@@ -198,8 +198,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
         decoration: const BoxDecoration(
-          color: AppTheme.bgSurface,
-          border: Border(top: BorderSide(color: AppTheme.borderSlate, width: 1)),
+          color: Colors.white,
+          border: Border(top: BorderSide(color: AppTheme.slate200, width: 1)),
         ),
         child: Row(
           children: [
@@ -224,9 +224,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withAlpha(120),
-                      blurRadius: 14,
-                      offset: const Offset(0, 4),
+                      color: AppTheme.primary.withAlpha(100),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -257,14 +257,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppTheme.bgCard,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppTheme.borderSlate, width: 1.2),
-                      boxShadow: [
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(color: AppTheme.slate200, width: 1.2),
+                      boxShadow: const [
                         BoxShadow(
-                          color: Colors.black.withAlpha(100),
-                          blurRadius: 20,
-                          offset: const Offset(0, 6),
+                          color: Color(0x06000000),
+                          blurRadius: 12,
+                          offset: Offset(0, 3),
                         ),
                       ],
                     ),
@@ -284,7 +284,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
-                            color: AppTheme.textWhite,
+                            color: AppTheme.slate900,
                             letterSpacing: -0.5,
                           ),
                         ),
@@ -293,14 +293,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           children: [
                             const Text(
                               'SKU CODE: ',
-                              style: TextStyle(fontSize: 11, color: AppTheme.textDim, fontWeight: FontWeight.w800, letterSpacing: 0.6),
+                              style: TextStyle(fontSize: 11, color: AppTheme.slate600, fontWeight: FontWeight.w800, letterSpacing: 0.6),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                               decoration: BoxDecoration(
-                                color: AppTheme.bgSurface,
+                                color: AppTheme.slate100,
                                 borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: AppTheme.borderSlate),
+                                border: Border.all(color: AppTheme.slate200),
                               ),
                               child: Text(
                                 p.sku,
@@ -308,14 +308,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   fontFamily: 'monospace',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w800,
-                                  color: AppTheme.primaryLight,
+                                  color: AppTheme.primary,
                                 ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 18),
-                        const Divider(color: AppTheme.borderSlate, height: 1),
+                        const Divider(color: AppTheme.slate200, height: 1),
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -329,7 +329,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 0.8,
-                                    color: AppTheme.textDim,
+                                    color: AppTheme.slate500,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -338,7 +338,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w900,
-                                    color: AppTheme.primaryLight,
+                                    color: AppTheme.primary,
                                   ),
                                 ),
                               ],
@@ -352,7 +352,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 0.8,
-                                    color: AppTheme.textDim,
+                                    color: AppTheme.slate500,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -361,7 +361,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w900,
-                                    color: AppTheme.textWhite,
+                                    color: AppTheme.slate900,
                                   ),
                                 ),
                               ],
@@ -377,9 +377,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppTheme.bgCard,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppTheme.borderSlate),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(color: AppTheme.slate200),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x06000000),
+                          blurRadius: 12,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,7 +397,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.8,
-                            color: AppTheme.textDim,
+                            color: AppTheme.slate600,
                           ),
                         ),
                         const SizedBox(height: 14),
@@ -407,10 +414,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
                                   color: isOut
-                                      ? AppTheme.danger.withAlpha(100)
+                                      ? AppTheme.danger.withAlpha(80)
                                       : isLow
-                                          ? AppTheme.warning.withAlpha(100)
-                                          : AppTheme.success.withAlpha(100),
+                                          ? AppTheme.warning.withAlpha(80)
+                                          : AppTheme.success.withAlpha(80),
                                 ),
                               ),
                               child: Icon(
@@ -437,7 +444,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     style: const TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w900,
-                                      color: AppTheme.textWhite,
+                                      color: AppTheme.slate900,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
@@ -454,7 +461,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           ? AppTheme.danger
                                           : isLow
                                               ? AppTheme.warning
-                                              : AppTheme.textMuted,
+                                              : AppTheme.slate600,
                                     ),
                                   ),
                                 ],
@@ -468,7 +475,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           child: LinearProgressIndicator(
                             value: stockProgress,
                             minHeight: 6,
-                            backgroundColor: AppTheme.bgSurface,
+                            backgroundColor: AppTheme.slate200,
                             valueColor: AlwaysStoppedAnimation<Color>(
                               isOut
                                   ? AppTheme.danger
@@ -487,9 +494,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppTheme.bgCard,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppTheme.borderSlate),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(color: AppTheme.slate200),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x06000000),
+                          blurRadius: 12,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,7 +514,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             fontSize: 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 0.8,
-                            color: AppTheme.textDim,
+                            color: AppTheme.slate600,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -512,8 +526,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             fontSize: 13,
                             height: 1.5,
                             color: p.description != null && p.description!.isNotEmpty
-                                ? AppTheme.textMuted
-                                : AppTheme.textDim,
+                                ? AppTheme.slate700
+                                : AppTheme.slate400,
                           ),
                         ),
                       ],

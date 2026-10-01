@@ -26,32 +26,32 @@ class ProductCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        color: AppTheme.bgCard,
-        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: isOut
-              ? AppTheme.danger.withAlpha(100)
+              ? AppTheme.danger.withAlpha(80)
               : isLow
-                  ? AppTheme.warning.withAlpha(100)
-                  : AppTheme.borderSlate,
+                  ? AppTheme.warning.withAlpha(80)
+                  : AppTheme.slate200,
           width: 1,
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withAlpha(80),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            color: Color(0x06000000),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(18),
           onTap: onTap,
-          splashColor: AppTheme.primary.withAlpha(40),
-          highlightColor: AppTheme.primary.withAlpha(20),
+          splashColor: AppTheme.primary.withAlpha(30),
+          highlightColor: AppTheme.primary.withAlpha(15),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -68,9 +68,9 @@ class ProductCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: AppTheme.bgSurface,
+                            color: AppTheme.slate100,
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: AppTheme.borderSlate, width: 0.8),
+                            border: Border.all(color: AppTheme.slate200, width: 0.8),
                           ),
                           child: Text(
                             product.sku,
@@ -78,7 +78,7 @@ class ProductCard extends StatelessWidget {
                               fontFamily: 'monospace',
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
-                              color: AppTheme.textMuted,
+                              color: AppTheme.slate700,
                             ),
                           ),
                         ),
@@ -99,7 +99,7 @@ class ProductCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
-                          color: AppTheme.textWhite,
+                          color: AppTheme.slate900,
                           letterSpacing: -0.3,
                         ),
                         maxLines: 2,
@@ -114,9 +114,9 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.primary.withAlpha(120),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
+                            color: AppTheme.primary.withAlpha(80),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -137,7 +137,7 @@ class ProductCard extends StatelessWidget {
                     product.description!,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: AppTheme.textDim,
+                      color: AppTheme.slate600,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -149,9 +149,9 @@ class ProductCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    color: AppTheme.bgSurface,
+                    color: AppTheme.slate50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.borderSlate.withAlpha(100), width: 1),
+                    border: Border.all(color: AppTheme.slate200, width: 1),
                   ),
                   child: Column(
                     children: [
@@ -187,7 +187,7 @@ class ProductCard extends StatelessWidget {
                                       ? AppTheme.danger
                                       : isLow
                                           ? AppTheme.warning
-                                          : AppTheme.textWhite,
+                                          : AppTheme.slate800,
                                 ),
                               ),
                             ],
@@ -195,7 +195,7 @@ class ProductCard extends StatelessWidget {
                           const Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 13,
-                            color: AppTheme.textDim,
+                            color: AppTheme.slate400,
                           ),
                         ],
                       ),
@@ -206,7 +206,7 @@ class ProductCard extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: stockProgress,
                           minHeight: 4,
-                          backgroundColor: AppTheme.bgCard,
+                          backgroundColor: AppTheme.slate200,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             isOut
                                 ? AppTheme.danger

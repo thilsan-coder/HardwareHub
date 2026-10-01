@@ -460,11 +460,12 @@ export default function StockMovements() {
                 onEdit={handleOpenEdit}
             />
 
-            {/* Edit Stock Movement Notes Modal (Edit) */}
+            {/* Edit Stock Movement Modal (Full Edit: Product, Type, Quantity, Reason) */}
             <StockMovementEditModal
                 isOpen={editModalOpen}
                 onClose={() => setEditModalOpen(false)}
                 movement={selectedMovementForEdit}
+                products={productsList}
                 onSaved={handleMovementUpdated}
             />
 
