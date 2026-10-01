@@ -182,9 +182,10 @@ export default function Dashboard({ setActivePage }) {
                         <span>Threshold ≤ Limit</span>
                         <button 
                             onClick={() => setActivePage('products')}
-                            className="font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer"
+                            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 text-[11px] font-bold transition-all shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer group"
                         >
-                            View &rarr;
+                            <span>View Items</span>
+                            <ArrowRight className="w-3 h-3 text-amber-600 group-hover:translate-x-0.5 transition-transform" />
                         </button>
                     </div>
                 </div>
@@ -205,7 +206,13 @@ export default function Dashboard({ setActivePage }) {
                     </div>
                     <div className="mt-2.5 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
                         <span>Inventory Depleted</span>
-                        <span className="font-bold text-rose-600">{outOfStockItems.length > 0 ? 'Restock' : 'Zero items'}</span>
+                        <button 
+                            onClick={() => setActivePage('products')}
+                            className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 text-[11px] font-bold transition-all shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer group"
+                        >
+                            <span>Restock</span>
+                            <ArrowRight className="w-3 h-3 text-rose-600 group-hover:translate-x-0.5 transition-transform" />
+                        </button>
                     </div>
                 </div>
             </div>
