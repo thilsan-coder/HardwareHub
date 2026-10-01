@@ -485,39 +485,6 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final pages = [
-      _buildDashboardTab(),
-      const ProductListScreen(),
-      const StockMovementsScreen(),
-      const RecycleBinScreen(),
-    ];
-
-    final titles = [
-      'Dashboard & KPIs',
-      'Products Inventory',
-      'Stock Ledger Audit',
-      'Recycle Bin Archive',
-    ];
-
-    return Scaffold(
-      backgroundColor: AppTheme.slate50,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppTheme.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.inventory_2_rounded, color: Colors.white, size: 16),
-            ),
-            const SizedBox(width: 10),
-            Text(titles[_currentBottomNavIndex]),
-          ],
-        ),
   void _showServerConfigDialog() async {
     final currentBaseUrl = await ApiService().getBaseUrl();
     final urlController = TextEditingController(text: currentBaseUrl);
