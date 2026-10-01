@@ -218,26 +218,26 @@ export default function Products() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                    {/* Export Products CSV */}
+                    {/* Export Products Excel */}
                     <a
                         href="/api/web/export/products"
                         download
                         className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/80 text-xs font-semibold transition-all shadow-xs"
-                        title="Download full products catalog in CSV/Excel"
+                        title="Download full products catalog in styled Microsoft Excel (.xlsx)"
                     >
                         <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                        <span>Export CSV</span>
+                        <span>Export Excel (.xlsx)</span>
                     </a>
 
-                    {/* Export Low Stock CSV */}
+                    {/* Export Low Stock Excel */}
                     <a
                         href="/api/web/export/low-stock"
                         download
                         className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100/80 text-amber-800 border border-amber-200/80 text-xs font-semibold transition-all shadow-xs"
-                        title="Download low-stock replenishment reorder report"
+                        title="Download low-stock replenishment reorder purchase sheet in Excel"
                     >
                         <AlertTriangle className="w-4 h-4 text-amber-600" />
-                        <span>Low Stock CSV</span>
+                        <span>Low Stock Excel</span>
                     </a>
 
                     {/* Refresh Catalog */}

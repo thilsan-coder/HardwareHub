@@ -115,14 +115,15 @@ export default function StockMovements() {
                 </div>
 
                 <div className="flex items-center space-x-2.5">
-                    {/* Export CSV Button */}
+                    {/* Export Excel Button */}
                     <a
                         href="/api/web/export/stock-movements"
                         className="inline-flex items-center space-x-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold transition-colors shadow-xs"
                         download
+                        title="Download full movements audit log in styled Microsoft Excel (.xlsx)"
                     >
-                        <Download className="w-3.5 h-3.5 text-slate-500" />
-                        <span>Export Log CSV</span>
+                        <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Export Excel (.xlsx)</span>
                     </a>
 
                     {/* Record Stock Movement Button */}

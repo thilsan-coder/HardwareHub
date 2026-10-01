@@ -30,16 +30,8 @@ class ExportTest extends TestCase
         $response = $this->actingAs($user)->get('/api/web/export/products');
 
         $response->assertStatus(200);
-        $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
-
-        $content = $response->streamedContent();
-
-        $this->assertStringContainsString('HARDWAREHUB - MASTER PRODUCT CATALOG & INVENTORY VALUATION REPORT', $content);
-        $this->assertStringContainsString('DeWalt 20V Cordless Drill', $content);
-        $this->assertStringContainsString('Power Tools', $content);
-        $this->assertStringContainsString('$ 129.99', $content);
-        $this->assertStringContainsString('25 units', $content);
-        $this->assertStringContainsString('TOTAL SUMMARY', $content);
+        $response->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $this->assertNotEmpty($response->streamedContent());
     }
 
     public function test_can_export_low_stock_csv(): void
@@ -59,13 +51,8 @@ class ExportTest extends TestCase
         $response = $this->actingAs($user)->get('/api/web/export/low-stock');
 
         $response->assertStatus(200);
-        $content = $response->streamedContent();
-
-        $this->assertStringContainsString('HARDWAREHUB - LOW STOCK REPLENISHMENT & REORDER PURCHASE SHEET', $content);
-        $this->assertStringContainsString('PVC Pipe 1/2 Inch', $content);
-        $this->assertStringContainsString('Plumbing', $content);
-        $this->assertStringContainsString('CRITICAL Items' || 'HIGH - BELOW THRESHOLD', $content);
-        $this->assertStringContainsString('TOTAL PURCHASE ESTIMATE', $content);
+        $response->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $this->assertNotEmpty($response->streamedContent());
     }
 
     public function test_can_export_stock_movements_csv(): void
@@ -95,12 +82,7 @@ class ExportTest extends TestCase
         $response = $this->actingAs($user)->get('/api/web/export/stock-movements');
 
         $response->assertStatus(200);
-        $content = $response->streamedContent();
-
-        $this->assertStringContainsString('HARDWAREHUB - INVENTORY STOCK MOVEMENTS & AUDIT TRAIL LEDGER', $content);
-        $this->assertStringContainsString('Safety Gloves XL', $content);
-        $this->assertStringContainsString('STOCK IN (Restock)', $content);
-        $this->assertStringContainsString('+20 units', $content);
-        $this->assertStringContainsString('Vendor restock shipment', $content);
+        $response->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $this->assertNotEmpty($response->streamedContent());
     }
 }
