@@ -7,6 +7,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
     const [formData, setFormData] = useState({
         name: '',
         sku: '',
+        category: 'General Hardware',
         description: '',
         price: '',
         quantity: '',
@@ -22,6 +23,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
             setFormData({
                 name: product.name || '',
                 sku: product.sku || '',
+                category: product.category || 'General Hardware',
                 description: product.description || '',
                 price: product.price ? String(product.price) : '',
                 quantity: product.quantity !== undefined ? String(product.quantity) : '',
@@ -32,6 +34,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
             setFormData({
                 name: '',
                 sku: '',
+                category: 'General Hardware',
                 description: '',
                 price: '',
                 quantity: '',
@@ -64,6 +67,7 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                 body: JSON.stringify({
                     name: formData.name,
                     sku: formData.sku,
+                    category: formData.category,
                     description: formData.description || null,
                     price: parseFloat(formData.price),
                     quantity: parseInt(formData.quantity, 10),
@@ -152,11 +156,11 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                         {errors.name && <p className="text-rose-600 text-xs mt-1">{errors.name[0]}</p>}
                     </div>
 
-                    {/* Row 2: SKU & Status (2 Columns) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Row 2: SKU, Category & Status (3 Columns) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
                             <label className="block text-xs font-semibold text-slate-700 mb-1">
-                                Product Code / SKU <span className="text-rose-500">*</span>
+                                Code / SKU <span className="text-rose-500">*</span>
                             </label>
                             <div className="relative">
                                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs font-mono">
@@ -174,6 +178,27 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                                 />
                             </div>
                             {errors.sku && <p className="text-rose-600 text-xs mt-1">{errors.sku[0]}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">
+                                Category <span className="text-rose-500">*</span>
+                            </label>
+                            <select
+                                value={formData.category}
+                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                className="w-full h-10 px-3 rounded-xl bg-slate-50/70 border border-slate-200 text-slate-800 text-xs font-medium focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                            >
+                                <option value="General Hardware">General Hardware</option>
+                                <option value="Hand Tools">Hand Tools</option>
+                                <option value="Power Tools">Power Tools</option>
+                                <option value="Plumbing">Plumbing</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Fasteners & Fixings">Fasteners & Fixings</option>
+                                <option value="Paints & Chemicals">Paints & Chemicals</option>
+                                <option value="Building Materials">Building Materials</option>
+                                <option value="Safety & Security">Safety & Security</option>
+                            </select>
                         </div>
 
                         <div>

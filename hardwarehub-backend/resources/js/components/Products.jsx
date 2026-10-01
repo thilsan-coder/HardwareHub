@@ -13,12 +13,30 @@ import {
     ArrowUpDown,
     Copy,
     CheckCheck,
-    XCircle
+    XCircle,
+    ArrowRightLeft,
+    Download,
+    Filter,
+    FileSpreadsheet,
+    Layers
 } from 'lucide-react';
 import ProductFormModal from './ProductFormModal.jsx';
 import ProductViewModal from './ProductViewModal.jsx';
 import DeleteConfirmModal from './DeleteConfirmModal.jsx';
+import StockMovementModal from './StockMovementModal.jsx';
 import Pagination from './Pagination.jsx';
+
+const CATEGORIES = [
+    'Hand Tools',
+    'Power Tools',
+    'Plumbing',
+    'Electrical',
+    'Fasteners',
+    'Paints',
+    'Building Materials',
+    'Safety',
+    'General'
+];
 
 export default function Products() {
     const [products, setProducts] = useState([]);
@@ -28,6 +46,7 @@ export default function Products() {
 
     // Filter, Search, and Sort States
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('newest'); // 'newest', 'stock_asc', 'stock_desc', 'price_asc', 'price_desc', 'name_asc'
     const [copiedSku, setCopiedSku] = useState(null);
 
@@ -44,6 +63,9 @@ export default function Products() {
 
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedProductForDelete, setSelectedProductForDelete] = useState(null);
+
+    const [movementModalOpen, setMovementModalOpen] = useState(false);
+    const [selectedProductForMovement, setSelectedProductForMovement] = useState(null);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -99,6 +121,11 @@ export default function Products() {
         setDeleteModalOpen(true);
     };
 
+    const handleOpenMovement = (product) => {
+        setSelectedProductForMovement(product);
+        setMovementModalOpen(true);
+    };
+
     // Callback on Save
     const handleProductSaved = (savedProduct, actionType) => {
         showToast(`Product "${savedProduct.name}" was successfully ${actionType}!`);
@@ -112,6 +139,36 @@ export default function Products() {
         fetchProducts();
     };
 
+    // Callback on Stock Movement Saved
+    const handleMovementSaved = () => {
+        showToast('Stock movement recorded & inventory updated successfully!');
+        fetchProducts();
+    };
+
+    // Category badge color helper
+    const getCategoryBadgeClass = (category) => {
+        switch (category) {
+            case 'Hand Tools':
+                return 'bg-blue-50 text-blue-700 border-blue-200/80';
+            case 'Power Tools':
+                return 'bg-amber-50 text-amber-700 border-amber-200/80';
+            case 'Plumbing':
+                return 'bg-cyan-50 text-cyan-700 border-cyan-200/80';
+            case 'Electrical':
+                return 'bg-yellow-50 text-yellow-800 border-yellow-200/80';
+            case 'Fasteners':
+                return 'bg-slate-100 text-slate-700 border-slate-200/80';
+            case 'Paints':
+                return 'bg-purple-50 text-purple-700 border-purple-200/80';
+            case 'Building Materials':
+                return 'bg-emerald-50 text-emerald-700 border-emerald-200/80';
+            case 'Safety':
+                return 'bg-rose-50 text-rose-700 border-rose-200/80';
+            default:
+                return 'bg-slate-100 text-slate-700 border-slate-200/80';
+        }
+    };
+
     // Filter & Sort Pipeline
     const filteredProducts = useMemo(() => {
         let list = [...products];
@@ -122,8 +179,14 @@ export default function Products() {
             list = list.filter(p => 
                 (p.name && p.name.toLowerCase().includes(q)) ||
                 (p.sku && p.sku.toLowerCase().includes(q)) ||
-                (p.description && p.description.toLowerCase().includes(q))
+                (p.description && p.description.toLowerCase().includes(q)) ||
+                (p.category && p.category.toLowerCase().includes(q))
             );
+        }
+
+        // Category Filter
+        if (selectedCategory !== 'all') {
+            list = list.filter(p => (p.category || 'General') === selectedCategory);
         }
 
         // Sorting
@@ -138,7 +201,7 @@ export default function Products() {
         });
 
         return list;
-    }, [products, searchTerm, sortBy]);
+    }, [products, searchTerm, selectedCategory, sortBy]);
 
     // Paginated items
     const paginatedProducts = useMemo(() => {
@@ -147,14 +210,37 @@ export default function Products() {
 
     return (
         <div className="space-y-6">
-            {/* Header Title & Primary Action */}
+            {/* Header Title & Primary Actions */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-200/80">
                 <div className="space-y-0.5">
                     <h1 className="text-xl font-bold text-slate-900 tracking-tight">Products Catalog</h1>
-                    <p className="text-xs text-slate-500">Manage hardware inventory items, stock levels & low stock alerts</p>
+                    <p className="text-xs text-slate-500">Manage hardware inventory items, categorized stock levels & live audit logs</p>
                 </div>
 
-                <div className="flex items-center space-x-2.5">
+                <div className="flex flex-wrap items-center gap-2">
+                    {/* Export Products CSV */}
+                    <a
+                        href="/api/web/export/products"
+                        download
+                        className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/80 text-xs font-semibold transition-all shadow-xs"
+                        title="Download full products catalog in CSV/Excel"
+                    >
+                        <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                        <span>Export CSV</span>
+                    </a>
+
+                    {/* Export Low Stock CSV */}
+                    <a
+                        href="/api/web/export/low-stock"
+                        download
+                        className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100/80 text-amber-800 border border-amber-200/80 text-xs font-semibold transition-all shadow-xs"
+                        title="Download low-stock replenishment reorder report"
+                    >
+                        <AlertTriangle className="w-4 h-4 text-amber-600" />
+                        <span>Low Stock CSV</span>
+                    </a>
+
+                    {/* Refresh Catalog */}
                     <button
                         onClick={fetchProducts}
                         disabled={loading}
@@ -164,6 +250,7 @@ export default function Products() {
                         <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
                     </button>
 
+                    {/* Add Product */}
                     <button
                         onClick={handleOpenCreate}
                         className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm shadow-indigo-600/20 transition-all active:scale-95"
@@ -189,10 +276,10 @@ export default function Products() {
                 </div>
             )}
 
-            {/* Search & Sort Controls Bar */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xs">
+            {/* Search, Category & Sort Controls Bar */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xs">
                 {/* Search Bar */}
-                <div className="sm:col-span-3 relative">
+                <div className="sm:col-span-6 relative">
                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <Search className="w-4 h-4" />
                     </span>
@@ -200,13 +287,30 @@ export default function Products() {
                         type="text"
                         value={searchTerm}
                         onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                        placeholder="Search by title, SKU code, or description keyword..."
+                        placeholder="Search by title, SKU code, or keyword..."
                         className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50/70 border border-slate-200 text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                     />
                 </div>
 
+                {/* Category Filter */}
+                <div className="sm:col-span-3 relative flex items-center">
+                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <Filter className="w-3.5 h-3.5" />
+                    </span>
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
+                        className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-50/70 border border-slate-200 text-slate-700 text-xs font-semibold focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                    >
+                        <option value="all">All Categories</option>
+                        {CATEGORIES.map((cat) => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+                </div>
+
                 {/* Sorting Select */}
-                <div className="relative flex items-center">
+                <div className="sm:col-span-3 relative flex items-center">
                     <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                         <ArrowUpDown className="w-3.5 h-3.5" />
                     </span>
@@ -233,6 +337,7 @@ export default function Products() {
                             <tr className="bg-slate-100/90 border-b border-slate-200 text-[11px] font-bold text-slate-700 uppercase tracking-wider select-none">
                                 <th className="py-3.5 px-5">SKU Code</th>
                                 <th className="py-3.5 px-5">Product Details</th>
+                                <th className="py-3.5 px-5">Category</th>
                                 <th className="py-3.5 px-5">Price</th>
                                 <th className="py-3.5 px-5">Stock In Hand</th>
                                 <th className="py-3.5 px-5">Alert Limit</th>
@@ -243,17 +348,17 @@ export default function Products() {
                         <tbody className="divide-y divide-slate-100 text-xs">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="7" className="py-12 text-center text-slate-500">
+                                    <td colSpan="8" className="py-12 text-center text-slate-500">
                                         <RefreshCw className="w-5 h-5 animate-spin mx-auto text-indigo-600 mb-2" />
                                         <span className="font-medium text-xs">Loading products catalog...</span>
                                     </td>
                                 </tr>
                             ) : filteredProducts.length === 0 ? (
                                 <tr>
-                                    <td colSpan="7" className="py-12 text-center text-slate-500">
+                                    <td colSpan="8" className="py-12 text-center text-slate-500">
                                         <Package className="w-7 h-7 mx-auto text-slate-400 mb-2" />
                                         <p className="font-semibold text-slate-700">No products found</p>
-                                        <p className="text-xs text-slate-400 mt-0.5">Try clearing filters or search query.</p>
+                                        <p className="text-xs text-slate-400 mt-0.5">Try clearing category filter or search query.</p>
                                     </td>
                                 </tr>
                             ) : (
@@ -262,6 +367,7 @@ export default function Products() {
                                     const threshold = prod.low_stock_threshold !== undefined && prod.low_stock_threshold !== null ? prod.low_stock_threshold : 10;
                                     const isLowStock = prod.quantity > 0 && prod.quantity <= threshold;
                                     const isOutOfStock = prod.quantity <= 0;
+                                    const categoryName = prod.category || 'General';
 
                                     // Compute visual progress bar width
                                     const maxCapacity = Math.max(threshold * 2, 50);
@@ -295,6 +401,13 @@ export default function Products() {
                                                         {prod.description}
                                                     </div>
                                                 )}
+                                            </td>
+
+                                            {/* Category Badge */}
+                                            <td className="py-3.5 px-5">
+                                                <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold border ${getCategoryBadgeClass(categoryName)}`}>
+                                                    {categoryName}
+                                                </span>
                                             </td>
 
                                             {/* Price */}
@@ -333,7 +446,7 @@ export default function Products() {
                                                                     : isLowStock
                                                                         ? 'bg-amber-400'
                                                                         : 'bg-emerald-500'
-                                                            }`}
+                                                                    }`}
                                                         />
                                                     </div>
                                                 </div>
@@ -361,6 +474,15 @@ export default function Products() {
                                             {/* Actions */}
                                             <td className="py-3.5 px-5 text-right">
                                                 <div className="inline-flex items-center space-x-1">
+                                                    {/* Quick Stock Movement Button */}
+                                                    <button
+                                                        onClick={() => handleOpenMovement(prod)}
+                                                        className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 transition-colors"
+                                                        title="Record Stock Movement (In / Out / Adjust)"
+                                                    >
+                                                        <ArrowRightLeft className="w-3.5 h-3.5" />
+                                                    </button>
+
                                                     {/* View Button */}
                                                     <button
                                                         onClick={() => handleOpenView(prod)}
@@ -409,6 +531,15 @@ export default function Products() {
                     }}
                 />
             </div>
+
+            {/* Stock Movement Modal */}
+            <StockMovementModal
+                isOpen={movementModalOpen}
+                onClose={() => setMovementModalOpen(false)}
+                products={products}
+                initialProduct={selectedProductForMovement}
+                onSaved={handleMovementSaved}
+            />
 
             {/* Product Form Modal (Create & Edit) */}
             <ProductFormModal

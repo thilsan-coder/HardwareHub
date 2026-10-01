@@ -9,7 +9,8 @@ import {
     ChevronRight,
     Boxes,
     Sparkles,
-    Shield
+    Shield,
+    ArrowRightLeft
 } from 'lucide-react';
 
 export default function Sidebar({ user, activePage, setActivePage, onLogout, loggingOut }) {
@@ -33,6 +34,12 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
                     label: 'Products',
                     icon: Package,
                     description: 'Catalog & stock levels'
+                },
+                {
+                    id: 'stock-movements',
+                    label: 'Stock Movements',
+                    icon: ArrowRightLeft,
+                    description: 'Stock In / Out ledger'
                 },
                 {
                     id: 'recycle-bin',

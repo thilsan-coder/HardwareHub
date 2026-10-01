@@ -25,6 +25,15 @@ Route::middleware(['web'])->group(function () {
         Route::put('/api/web/products/{id}', [ProductWebController::class, 'update']);
         Route::delete('/api/web/products/{id}', [ProductWebController::class, 'destroy']);
 
+        // Stock Movements & Audit Log Routes (Phase 7)
+        Route::get('/api/web/stock-movements', [\App\Http\Controllers\StockMovementController::class, 'index']);
+        Route::post('/api/web/stock-movements', [\App\Http\Controllers\StockMovementController::class, 'store']);
+
+        // Data Export Routes (Phase 7)
+        Route::get('/api/web/export/products', [\App\Http\Controllers\ExportController::class, 'exportProductsCsv']);
+        Route::get('/api/web/export/low-stock', [\App\Http\Controllers\ExportController::class, 'exportLowStockCsv']);
+        Route::get('/api/web/export/stock-movements', [\App\Http\Controllers\ExportController::class, 'exportStockMovementsCsv']);
+
         // Recycle Bin & Soft Delete Routes (Phase 5)
         Route::get('/api/web/recycle-bin', [RecycleBinWebController::class, 'index']);
         Route::post('/api/web/recycle-bin/{id}/restore', [RecycleBinWebController::class, 'restore']);

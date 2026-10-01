@@ -14,6 +14,7 @@ class Product extends Model
         'name',
         'sku',
         'description',
+        'category',
         'price',
         'quantity',
         'low_stock_threshold',
@@ -27,5 +28,13 @@ class Product extends Model
             'quantity' => 'integer',
             'low_stock_threshold' => 'integer',
         ];
+    }
+
+    /**
+     * Stock movements history for this product.
+     */
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class)->latest();
     }
 }

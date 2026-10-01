@@ -29,6 +29,7 @@ export default function TopBar({ activePage, toggleSidebar }) {
     const pageTitles = {
         'dashboard': 'Dashboard Overview',
         'products': 'Product Catalog',
+        'stock-movements': 'Stock Movements & Audit Log',
         'recycle-bin': 'Recycle Bin Archive',
         'users': 'System Users'
     };
