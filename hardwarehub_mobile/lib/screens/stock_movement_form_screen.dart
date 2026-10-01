@@ -159,15 +159,18 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
                         DropdownButtonFormField<ProductModel>(
                           initialValue: _selectedProduct,
                           isExpanded: true,
+                          dropdownColor: Colors.white,
+                          style: const TextStyle(color: AppTheme.slate900, fontSize: 14, fontWeight: FontWeight.w600),
                           decoration: const InputDecoration(
                             labelText: 'Select Product *',
-                            prefixIcon: Icon(Icons.qr_code_rounded),
+                            prefixIcon: Icon(Icons.qr_code_rounded, color: AppTheme.primary),
                           ),
                           items: _products.map((p) {
                             return DropdownMenuItem(
                               value: p,
                               child: Text(
                                 '${p.name} (${p.sku}) — ${p.quantity} in stock',
+                                style: const TextStyle(color: AppTheme.slate900),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             );
@@ -212,11 +215,12 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
                         TextFormField(
                           controller: _quantityController,
                           keyboardType: TextInputType.number,
+                          style: const TextStyle(color: AppTheme.slate900, fontSize: 15, fontWeight: FontWeight.w700),
                           onChanged: (val) => setState(() {}),
                           decoration: const InputDecoration(
                             labelText: 'Units Quantity *',
                             hintText: 'e.g. 10',
-                            prefixIcon: Icon(Icons.numbers_rounded),
+                            prefixIcon: Icon(Icons.numbers_rounded, color: AppTheme.primary),
                           ),
                           validator: (val) {
                             if (val == null || val.trim().isEmpty) return 'Quantity is required';
@@ -229,6 +233,7 @@ class _StockMovementFormScreenState extends State<StockMovementFormScreen> {
                         TextFormField(
                           controller: _reasonController,
                           maxLines: 2,
+                          style: const TextStyle(color: AppTheme.slate900, fontSize: 13, fontWeight: FontWeight.w500),
                           decoration: const InputDecoration(
                             labelText: 'Reason / Memo (Optional)',
                             hintText: 'e.g. Supplier delivery, customer dispatch, audit fix',

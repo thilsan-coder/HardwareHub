@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../config/theme.dart';
 import '../models/dashboard_stats_model.dart';
 import '../models/user_model.dart';
+import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../services/product_service.dart';
 import '../widgets/metric_card.dart';
@@ -362,40 +363,43 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             ),
             const SizedBox(height: 10),
 
-            Row(
-              children: [
-                Expanded(
-                  child: _buildActionTile(
-                    title: 'New Product',
-                    subtitle: 'Add catalog SKU',
-                    icon: Icons.add_box_rounded,
-                    color: AppTheme.primary,
-                    onTap: () async {
-                      final added = await Navigator.push<bool>(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ProductFormScreen()),
-                      );
-                      if (added == true) _loadDashboardData();
-                    },
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: _buildActionTile(
+                      title: 'New Product',
+                      subtitle: 'Add catalog SKU',
+                      icon: Icons.add_box_rounded,
+                      color: AppTheme.primary,
+                      onTap: () async {
+                        final added = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ProductFormScreen()),
+                        );
+                        if (added == true) _loadDashboardData();
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _buildActionTile(
-                    title: 'Log Movement',
-                    subtitle: 'Audit stock change',
-                    icon: Icons.swap_horiz_rounded,
-                    color: AppTheme.success,
-                    onTap: () async {
-                      final added = await Navigator.push<bool>(
-                        context,
-                        MaterialPageRoute(builder: (_) => const StockMovementFormScreen()),
-                      );
-                      if (added == true) _loadDashboardData();
-                    },
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildActionTile(
+                      title: 'Log Movement',
+                      subtitle: 'Audit stock change',
+                      icon: Icons.swap_horiz_rounded,
+                      color: AppTheme.success,
+                      onTap: () async {
+                        final added = await Navigator.push<bool>(
+                          context,
+                          MaterialPageRoute(builder: (_) => const StockMovementFormScreen()),
+                        );
+                        if (added == true) _loadDashboardData();
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -440,7 +444,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           borderRadius: BorderRadius.circular(16),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             child: Row(
               children: [
                 Container(
@@ -454,10 +458,22 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppTheme.slate900)),
-                      Text(subtitle, style: const TextStyle(fontSize: 10, color: AppTheme.slate500)),
+                      Text(
+                        title,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppTheme.slate900),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(fontSize: 10, color: AppTheme.slate500),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ),
                 ),
@@ -502,9 +518,116 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             Text(titles[_currentBottomNavIndex]),
           ],
         ),
+  void _showServerConfigDialog() async {
+    final currentBaseUrl = await ApiService().getBaseUrl();
+    final urlController = TextEditingController(text: currentBaseUrl);
+
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: const [
+            Icon(Icons.dns_rounded, color: AppTheme.primary, size: 22),
+            SizedBox(width: 8),
+            Text('Server Connection URL', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.slate900)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Configure backend API URL:', style: TextStyle(fontSize: 12, color: AppTheme.slate600)),
+            const SizedBox(height: 10),
+            TextField(
+              controller: urlController,
+              decoration: const InputDecoration(
+                hintText: 'http://127.0.0.1:8000/api/v1',
+                prefixIcon: Icon(Icons.link_rounded),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppTheme.slate100,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppTheme.slate200),
+              ),
+              child: const Text(
+                '• USB Cable Mode: http://127.0.0.1:8000/api/v1\n• Wi-Fi Mobile: http://192.168.1.13:8000/api/v1',
+                style: TextStyle(fontSize: 11, color: AppTheme.slate600, height: 1.4),
+              ),
+            ),
+          ],
+        ),
         actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppTheme.slate600)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await ApiService().setBaseUrl(urlController.text);
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Server URL updated!'), backgroundColor: AppTheme.success),
+                );
+                _loadDashboardData();
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pages = [
+      _buildDashboardTab(),
+      const ProductListScreen(),
+      const StockMovementsScreen(),
+      const RecycleBinScreen(),
+    ];
+
+    final titles = [
+      'Dashboard & KPIs',
+      'Products Inventory',
+      'Stock Ledger Audit',
+      'Recycle Bin Archive',
+    ];
+
+    return Scaffold(
+      backgroundColor: AppTheme.slate50,
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: AppTheme.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.inventory_2_rounded, color: Colors.white, size: 16),
+            ),
+            const SizedBox(width: 10),
+            Text(titles[_currentBottomNavIndex]),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.dns_outlined, size: 18),
+            tooltip: 'Server Connection',
+            onPressed: _showServerConfigDialog,
+          ),
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

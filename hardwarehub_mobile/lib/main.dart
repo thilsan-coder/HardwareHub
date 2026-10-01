@@ -29,7 +29,9 @@ class HardwareHubApp extends StatelessWidget {
     return MaterialApp(
       title: 'HardwareHub',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.webMatchedTheme,
+      darkTheme: AppTheme.webMatchedTheme,
+      themeMode: ThemeMode.light,
       home: const SplashScreen(),
     );
   }

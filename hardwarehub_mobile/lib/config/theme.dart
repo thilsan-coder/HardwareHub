@@ -74,9 +74,18 @@ class AppTheme {
         primary: primary,
         secondary: slate900,
         surface: Colors.white,
+        onSurface: slate900,
         error: danger,
       ),
-      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: primary,
+        selectionColor: primaryLight,
+        selectionHandleColor: primary,
+      ),
+      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme).apply(
+        bodyColor: slate900,
+        displayColor: slate900,
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: slate900,
         foregroundColor: Colors.white,
@@ -116,13 +125,13 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: slate50,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        hintStyle: const TextStyle(color: slate400, fontSize: 13),
-        labelStyle: const TextStyle(color: slate600, fontSize: 13, fontWeight: FontWeight.w600),
+        hintStyle: const TextStyle(color: slate400, fontSize: 13, fontWeight: FontWeight.normal),
+        labelStyle: const TextStyle(color: slate700, fontSize: 13, fontWeight: FontWeight.w600),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: slate200),
+          borderSide: const BorderSide(color: slate300),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

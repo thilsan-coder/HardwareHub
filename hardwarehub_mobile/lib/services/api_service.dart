@@ -29,7 +29,11 @@ class ApiService {
 
   Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyBaseUrl) ?? AppConstants.defaultBaseUrl;
+    final custom = prefs.getString(_keyBaseUrl);
+    if (custom != null && custom.isNotEmpty && !custom.contains('10.0.2.2')) {
+      return custom;
+    }
+    return AppConstants.defaultBaseUrl;
   }
 
   Future<void> setBaseUrl(String url) async {
