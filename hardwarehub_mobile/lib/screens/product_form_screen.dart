@@ -89,7 +89,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           );
           Navigator.pop(context, true);
         } else {
-          // Display validation error or failure message
           String errorMessage = res.message ?? 'Failed to save product';
           if (res.data != null && res.data['errors'] is Map) {
             final errors = res.data['errors'] as Map<String, dynamic>;
@@ -124,9 +123,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.slate50,
+      backgroundColor: AppTheme.bgDark,
       appBar: AppBar(
-        title: Text(isEdit ? 'Edit Product' : 'Add New Product'),
+        title: Text(isEdit ? 'Edit SKU Details' : 'Register New SKU'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -137,16 +136,18 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             children: [
               // General Information Card
               _buildCard(
-                title: 'General Information',
+                title: 'GENERAL INFORMATION',
                 icon: Icons.info_outline_rounded,
                 children: [
                   // Product Name
+                  const Text('PRODUCT NAME *', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: AppTheme.textDim)),
+                  const SizedBox(height: 6),
                   TextFormField(
                     controller: _nameController,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: const InputDecoration(
-                      labelText: 'Product Name *',
                       hintText: 'e.g. DeWalt 20V Cordless Drill',
-                      prefixIcon: Icon(Icons.inventory_2_outlined),
+                      prefixIcon: Icon(Icons.inventory_2_outlined, color: AppTheme.primaryLight, size: 20),
                     ),
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) return 'Product name is required';
@@ -157,13 +158,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   const SizedBox(height: 16),
 
                   // SKU (Stock Keeping Unit)
+                  const Text('SKU CODE *', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: AppTheme.textDim)),
+                  const SizedBox(height: 6),
                   TextFormField(
                     controller: _skuController,
                     textCapitalization: TextCapitalization.characters,
+                    style: const TextStyle(color: Colors.white, fontSize: 14, fontFamily: 'monospace'),
                     decoration: const InputDecoration(
-                      labelText: 'SKU (Stock Keeping Unit) *',
                       hintText: 'e.g. TOOL-DW-20V',
-                      prefixIcon: Icon(Icons.qr_code_rounded),
+                      prefixIcon: Icon(Icons.qr_code_rounded, color: AppTheme.primaryLight, size: 20),
                     ),
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) return 'SKU code is required';
@@ -174,11 +177,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   const SizedBox(height: 16),
 
                   // Category Dropdown
+                  const Text('CATEGORY *', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: AppTheme.textDim)),
+                  const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
                     initialValue: _category,
+                    dropdownColor: AppTheme.bgCard,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: const InputDecoration(
-                      labelText: 'Category *',
-                      prefixIcon: Icon(Icons.category_outlined),
+                      prefixIcon: Icon(Icons.category_outlined, color: AppTheme.primaryLight, size: 20),
                     ),
                     items: AppConstants.categories.map((cat) {
                       return DropdownMenuItem(
@@ -193,11 +199,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   const SizedBox(height: 16),
 
                   // Description
+                  const Text('DESCRIPTION (OPTIONAL)', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: AppTheme.textDim)),
+                  const SizedBox(height: 6),
                   TextFormField(
                     controller: _descriptionController,
                     maxLines: 3,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
                     decoration: const InputDecoration(
-                      labelText: 'Description (Optional)',
                       hintText: 'Provide technical specifications or details...',
                       alignLabelWithHint: true,
                     ),
@@ -208,17 +216,19 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
               // Pricing & Stock Card
               _buildCard(
-                title: 'Pricing & Inventory',
+                title: 'PRICING & STOCK CONTROL',
                 icon: Icons.attach_money_rounded,
                 children: [
                   // Price
+                  const Text('UNIT PRICE (\$) *', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: AppTheme.textDim)),
+                  const SizedBox(height: 6),
                   TextFormField(
                     controller: _priceController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: const InputDecoration(
-                      labelText: 'Unit Price (\$) *',
                       hintText: '0.00',
-                      prefixIcon: Icon(Icons.attach_money_rounded),
+                      prefixIcon: Icon(Icons.attach_money_rounded, color: AppTheme.primaryLight, size: 20),
                     ),
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) return 'Price is required';
@@ -233,38 +243,52 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: TextFormField(
-                          controller: _quantityController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'Current Quantity *',
-                            hintText: '0',
-                            prefixIcon: Icon(Icons.storage_rounded),
-                          ),
-                          validator: (val) {
-                            if (val == null || val.trim().isEmpty) return 'Quantity is required';
-                            final num = int.tryParse(val.trim());
-                            if (num == null || num < 0) return 'Valid integer required';
-                            return null;
-                          },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('STOCK QUANTITY *', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: AppTheme.textDim)),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _quantityController,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                              decoration: const InputDecoration(
+                                hintText: '0',
+                                prefixIcon: Icon(Icons.storage_rounded, color: AppTheme.primaryLight, size: 20),
+                              ),
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) return 'Quantity required';
+                                final num = int.tryParse(val.trim());
+                                if (num == null || num < 0) return 'Integer required';
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: TextFormField(
-                          controller: _thresholdController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'Low Stock Alert *',
-                            hintText: '10',
-                            prefixIcon: Icon(Icons.warning_amber_rounded),
-                          ),
-                          validator: (val) {
-                            if (val == null || val.trim().isEmpty) return 'Alert limit required';
-                            final num = int.tryParse(val.trim());
-                            if (num == null || num < 0) return 'Valid integer required';
-                            return null;
-                          },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('ALERT THRESHOLD *', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.8, color: AppTheme.textDim)),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _thresholdController,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                              decoration: const InputDecoration(
+                                hintText: '10',
+                                prefixIcon: Icon(Icons.warning_amber_rounded, color: AppTheme.warning, size: 20),
+                              ),
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) return 'Limit required';
+                                final num = int.tryParse(val.trim());
+                                if (num == null || num < 0) return 'Integer required';
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -275,20 +299,20 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
               // Status Switch Card
               _buildCard(
-                title: 'Catalog Status',
+                title: 'CATALOG STATUS',
                 icon: Icons.toggle_on_outlined,
                 children: [
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(
-                      _status == 'active' ? 'Active Product' : 'Inactive Product',
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                      _status == 'active' ? 'Active in Store' : 'Inactive / Hidden',
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: AppTheme.textWhite),
                     ),
                     subtitle: Text(
                       _status == 'active'
-                          ? 'This product is visible in standard catalogs.'
-                          : 'This product is marked inactive/disabled.',
-                      style: const TextStyle(fontSize: 12, color: AppTheme.slate500),
+                          ? 'This product is visible in active inventory catalogs.'
+                          : 'This product is disabled and hidden.',
+                      style: const TextStyle(fontSize: 12, color: AppTheme.textDim),
                     ),
                     value: _status == 'active',
                     activeTrackColor: AppTheme.success,
@@ -301,40 +325,54 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               const SizedBox(height: 24),
 
               // Action Buttons
-              ElevatedButton(
-                onPressed: _isLoading ? null : _submitForm,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: AppTheme.primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppTheme.primaryGradient,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primary.withAlpha(120),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(isEdit ? Icons.save_rounded : Icons.add_circle_outline_rounded, size: 20),
-                          const SizedBox(width: 8),
-                          Text(
-                            isEdit ? 'Save Changes' : 'Create Product',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                          ),
-                        ],
-                      ),
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _submitForm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(isEdit ? Icons.save_rounded : Icons.add_circle_outline_rounded, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              isEdit ? 'Save Changes' : 'Register Product SKU',
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: -0.2),
+                            ),
+                          ],
+                        ),
+                ),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  side: const BorderSide(color: AppTheme.slate300),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  side: const BorderSide(color: AppTheme.borderSlate),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('Cancel', style: TextStyle(color: AppTheme.slate700, fontWeight: FontWeight.w600)),
+                child: const Text('Cancel', style: TextStyle(color: AppTheme.textMuted, fontWeight: FontWeight.w700)),
               ),
               const SizedBox(height: 30),
             ],
@@ -350,16 +388,16 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     required List<Widget> children,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.slate200),
-        boxShadow: const [
+        color: AppTheme.bgCard,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.borderSlate),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x04000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: Colors.black.withAlpha(80),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -368,15 +406,15 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: AppTheme.primary),
+              Icon(icon, size: 16, color: AppTheme.primaryLight),
               const SizedBox(width: 8),
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
-                  color: AppTheme.slate800,
-                  letterSpacing: -0.2,
+                  color: AppTheme.textWhite,
+                  letterSpacing: 0.8,
                 ),
               ),
             ],

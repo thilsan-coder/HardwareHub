@@ -108,101 +108,86 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.slate50,
-      appBar: AppBar(
-        title: const Text('Product Inventory'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Refresh',
-            onPressed: _loadProducts,
+      backgroundColor: AppTheme.bgDark,
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          gradient: AppTheme.primaryGradient,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primary.withAlpha(150),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: _navigateToCreate,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          icon: const Icon(Icons.add_rounded, color: Colors.white),
+          label: const Text(
+            'New SKU',
+            style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2),
           ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _navigateToCreate,
-        backgroundColor: AppTheme.primary,
-        icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text(
-          'Add Product',
-          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
         ),
       ),
       body: Column(
         children: [
           // Search and Filters Header
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            color: AppTheme.bgSurface,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             child: Column(
               children: [
-                // Search Input
+                // Search Input with Glowing Dark Input
                 TextField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: 'Search by product name, SKU...',
-                    prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.slate400),
+                    prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primaryLight, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear_rounded, color: AppTheme.slate400, size: 20),
+                            icon: const Icon(Icons.clear_rounded, color: AppTheme.textMuted, size: 18),
                             onPressed: () {
                               _searchController.clear();
                               _onSearchChanged('');
                             },
                           )
                         : null,
-                    filled: true,
-                    fillColor: AppTheme.slate50,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.slate200),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.slate200),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.primary, width: 2),
-                    ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
                 // Category Filter Chips
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildFilterChip('All', _selectedCategory == 'All', (val) {
-                        setState(() => _selectedCategory = 'All');
-                        _loadProducts();
-                      }),
+                      _buildCategoryChip('All', _selectedCategory == 'All'),
                       ...AppConstants.categories.map((cat) {
-                        return _buildFilterChip(cat, _selectedCategory == cat, (val) {
-                          setState(() => _selectedCategory = cat);
-                          _loadProducts();
-                        });
+                        return _buildCategoryChip(cat, _selectedCategory == cat);
                       }),
                     ],
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 10),
 
-                // Status Filter Chips
+                // Status Segment Chips
                 Row(
                   children: [
                     const Text(
-                      'Status: ',
+                      'STATUS: ',
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.slate500,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.8,
+                        color: AppTheme.textDim,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 8),
                     _buildStatusChip('All', _selectedStatus == 'All'),
                     _buildStatusChip('Active', _selectedStatus == 'Active'),
                     _buildStatusChip('Inactive', _selectedStatus == 'Inactive'),
@@ -214,20 +199,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
           // Product count summary bar
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: const BoxDecoration(
-              color: AppTheme.slate100,
-              border: Border(bottom: BorderSide(color: AppTheme.slate200)),
+              color: AppTheme.bgDark,
+              border: Border(bottom: BorderSide(color: AppTheme.borderSlate, width: 0.8)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Showing ${_products.length} product${_products.length == 1 ? '' : 's'}',
+                  'SHOWING ${_products.length} PRODUCT${_products.length == 1 ? '' : 'S'}',
                   style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.slate600,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.6,
+                    color: AppTheme.textMuted,
                   ),
                 ),
                 if (_selectedCategory != 'All' || _selectedStatus != 'All' || _searchQuery.isNotEmpty)
@@ -242,11 +228,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       _loadProducts();
                     },
                     child: const Text(
-                      'Reset Filters',
+                      'Clear Filters',
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.primaryLight,
                       ),
                     ),
                   ),
@@ -257,12 +243,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
           // Product List view
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
+                ? const Center(child: CircularProgressIndicator(color: AppTheme.primaryLight))
                 : _products.isEmpty
                     ? _buildEmptyState()
                     : RefreshIndicator(
                         onRefresh: _loadProducts,
-                        color: AppTheme.primary,
+                        color: AppTheme.primaryLight,
+                        backgroundColor: AppTheme.bgCard,
                         child: ListView.builder(
                           padding: const EdgeInsets.fromLTRB(16, 14, 16, 80),
                           itemCount: _products.length,
@@ -281,27 +268,43 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, bool isSelected, Function(bool) onSelected) {
+  Widget _buildCategoryChip(String label, bool isSelected) {
     return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: FilterChip(
-        label: Text(label),
-        selected: isSelected,
-        onSelected: onSelected,
-        selectedColor: AppTheme.primary.withAlpha(35),
-        checkmarkColor: AppTheme.primary,
-        labelStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-          color: isSelected ? AppTheme.primary : AppTheme.slate700,
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: () {
+          setState(() => _selectedCategory = label);
+          _loadProducts();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppTheme.primaryGradient : null,
+            color: isSelected ? null : AppTheme.bgCard,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected ? Colors.transparent : AppTheme.borderSlate,
+              width: 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppTheme.primary.withAlpha(100),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+              color: isSelected ? Colors.white : AppTheme.textMuted,
+            ),
+          ),
         ),
-        backgroundColor: AppTheme.slate100,
-        side: BorderSide(
-          color: isSelected ? AppTheme.primary : Colors.transparent,
-          width: 1,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -309,28 +312,30 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget _buildStatusChip(String label, bool isSelected) {
     return Padding(
       padding: const EdgeInsets.only(right: 6),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: isSelected,
-        onSelected: (val) {
-          if (val) {
-            setState(() => _selectedStatus = label);
-            _loadProducts();
-          }
+      child: GestureDetector(
+        onTap: () {
+          setState(() => _selectedStatus = label);
+          _loadProducts();
         },
-        selectedColor: AppTheme.slate900,
-        labelStyle: TextStyle(
-          fontSize: 11,
-          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-          color: isSelected ? Colors.white : AppTheme.slate600,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.textWhite : AppTheme.bgCard,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? AppTheme.textWhite : AppTheme.borderSlate,
+              width: 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: isSelected ? AppTheme.bgDark : AppTheme.textMuted,
+            ),
+          ),
         ),
-        backgroundColor: Colors.white,
-        side: BorderSide(
-          color: isSelected ? AppTheme.slate900 : AppTheme.slate200,
-          width: 1,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       ),
     );
   }
@@ -343,36 +348,38 @@ class _ProductListScreenState extends State<ProductListScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: AppTheme.slate100,
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: AppTheme.bgCard,
                 shape: BoxShape.circle,
+                border: Border.all(color: AppTheme.borderSlate),
               ),
               child: const Icon(
                 Icons.search_off_rounded,
                 size: 48,
-                color: AppTheme.slate400,
+                color: AppTheme.textMuted,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             const Text(
               'No Products Found',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.slate800,
+                fontWeight: FontWeight.w800,
+                color: AppTheme.textWhite,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             const Text(
-              'Try adjusting your search filters or add a new product to your inventory catalog.',
+              'Try adjusting your search query, selecting another category, or register a new SKU in your catalog.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: AppTheme.slate500,
+                color: AppTheme.textDim,
+                height: 1.4,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: _navigateToCreate,
               icon: const Icon(Icons.add_rounded, size: 18),

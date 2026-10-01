@@ -21,53 +21,64 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isOut = product.isOutOfStock;
     final isLow = product.isLowStock;
+    final stockProgress = product.quantity > 50 ? 1.0 : (product.quantity / 50.0).clamp(0.0, 1.0);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.slate200, width: 1),
-        boxShadow: const [
+        color: AppTheme.bgCard,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isOut
+              ? AppTheme.danger.withAlpha(100)
+              : isLow
+                  ? AppTheme.warning.withAlpha(100)
+                  : AppTheme.borderSlate,
+          width: 1,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x04000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: Colors.black.withAlpha(80),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           onTap: onTap,
+          splashColor: AppTheme.primary.withAlpha(40),
+          highlightColor: AppTheme.primary.withAlpha(20),
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Row: Category & Status Badge
+                // Top Row: Category Badge, SKU, Status Badge
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         StatusBadge(status: product.category, isCategory: true),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: AppTheme.slate100,
+                            color: AppTheme.bgSurface,
                             borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppTheme.borderSlate, width: 0.8),
                           ),
                           child: Text(
                             product.sku,
                             style: const TextStyle(
                               fontFamily: 'monospace',
                               fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.slate600,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textMuted,
                             ),
                           ),
                         ),
@@ -76,102 +87,134 @@ class ProductCard extends StatelessWidget {
                     StatusBadge(status: product.status),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
-                // Middle: Product Name & Price
+                // Middle: Product Name & Glowing Price Tag
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
                         product.name,
                         style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.slate900,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.textWhite,
+                          letterSpacing: -0.3,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '\$${product.price.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: AppTheme.primary,
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: AppTheme.primaryGradient,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primary.withAlpha(120),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        '\$${product.price.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 if (product.description != null && product.description!.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     product.description!,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: AppTheme.slate500,
+                      color: AppTheme.textDim,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
-                // Bottom: Stock Status & Action Buttons
+                // Stock Health Meter & Status Bar
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    color: isOut
-                        ? AppTheme.dangerBg
-                        : isLow
-                            ? AppTheme.warningBg
-                            : AppTheme.slate50,
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppTheme.bgSurface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppTheme.borderSlate.withAlpha(100), width: 1),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(
-                            isOut
-                                ? Icons.cancel_outlined
-                                : isLow
-                                    ? Icons.warning_amber_rounded
-                                    : Icons.inventory_2_outlined,
-                            size: 15,
-                            color: isOut
-                                ? AppTheme.danger
-                                : isLow
-                                    ? const Color(0xFFB45309)
-                                    : AppTheme.slate600,
+                          Row(
+                            children: [
+                              Icon(
+                                isOut
+                                    ? Icons.cancel_outlined
+                                    : isLow
+                                        ? Icons.warning_amber_rounded
+                                        : Icons.inventory_2_outlined,
+                                size: 15,
+                                color: isOut
+                                    ? AppTheme.danger
+                                    : isLow
+                                        ? AppTheme.warning
+                                        : AppTheme.success,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                isOut
+                                    ? '0 Units (Out of Stock)'
+                                    : isLow
+                                        ? '${product.quantity} Units (Low Stock Alert)'
+                                        : '${product.quantity} Units in Inventory',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: isOut
+                                      ? AppTheme.danger
+                                      : isLow
+                                          ? AppTheme.warning
+                                          : AppTheme.textWhite,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            isOut
-                                ? '0 in stock (Out of Stock)'
-                                : isLow
-                                    ? '${product.quantity} in stock (Low Stock)'
-                                    : '${product.quantity} units in stock',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: isOut
-                                  ? AppTheme.danger
-                                  : isLow
-                                      ? const Color(0xFF9A3412)
-                                      : AppTheme.slate800,
-                            ),
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 13,
+                            color: AppTheme.textDim,
                           ),
                         ],
                       ),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        size: 18,
-                        color: AppTheme.slate400,
+                      const SizedBox(height: 8),
+                      // Progress Bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: stockProgress,
+                          minHeight: 4,
+                          backgroundColor: AppTheme.bgCard,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isOut
+                                ? AppTheme.danger
+                                : isLow
+                                    ? AppTheme.warning
+                                    : AppTheme.success,
+                          ),
+                        ),
                       ),
                     ],
                   ),

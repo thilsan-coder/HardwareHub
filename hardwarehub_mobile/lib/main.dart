@@ -12,9 +12,9 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: AppTheme.bgDark,
+      systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
 
@@ -29,7 +29,7 @@ class HardwareHubApp extends StatelessWidget {
     return MaterialApp(
       title: 'HardwareHub',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.darkTheme,
       home: const SplashScreen(),
     );
   }
@@ -73,21 +73,21 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.slate900,
+      backgroundColor: AppTheme.bgDark,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: AppTheme.primary,
-                borderRadius: BorderRadius.circular(24),
+                gradient: AppTheme.primaryGradient,
+                borderRadius: BorderRadius.circular(26),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primary.withAlpha(100),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
+                    color: AppTheme.primary.withAlpha(150),
+                    blurRadius: 30,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
@@ -102,9 +102,9 @@ class _SplashScreenState extends State<SplashScreen> {
               'HardwareHub',
               style: TextStyle(
                 fontSize: 28,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-                letterSpacing: -0.5,
+                fontWeight: FontWeight.w900,
+                color: AppTheme.textWhite,
+                letterSpacing: -0.6,
               ),
             ),
             const SizedBox(height: 8),
@@ -112,7 +112,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'Enterprise Product & Inventory Management',
               style: TextStyle(
                 fontSize: 13,
-                color: AppTheme.slate400,
+                color: AppTheme.textMuted,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -121,7 +121,7 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 28,
               height: 28,
               child: CircularProgressIndicator(
-                color: AppTheme.primary,
+                color: AppTheme.primaryLight,
                 strokeWidth: 2.5,
               ),
             ),
