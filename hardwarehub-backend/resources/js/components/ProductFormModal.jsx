@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, AlertCircle, Loader2, Package, Hash, AlertTriangle } from 'lucide-react';
+import { X, Save, AlertCircle, Loader2, Package, Hash } from 'lucide-react';
 
 export default function ProductFormModal({ isOpen, onClose, product, onSaved }) {
     const isEdit = Boolean(product && product.id);
@@ -192,8 +192,8 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                         </div>
                     </div>
 
-                    {/* Row 3: Unit Price & Quantity (2 Columns) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Row 3: Pricing, Stock & Alert Threshold (3 Columns) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
                             <label className="block text-xs font-semibold text-slate-700 mb-1">
                                 Unit Price ($) <span className="text-rose-500">*</span>
@@ -236,14 +236,10 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                             />
                             {errors.quantity && <p className="text-rose-600 text-xs mt-1">{errors.quantity[0]}</p>}
                         </div>
-                    </div>
 
-                    {/* Row 4: Low Stock Alert Limit & Guide Card (2 Columns) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
                         <div>
-                            <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center space-x-1">
-                                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                                <span>Low Stock Alert Limit <span className="text-rose-500">*</span></span>
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">
+                                Low Stock Alert Limit <span className="text-rose-500">*</span>
                             </label>
                             <input
                                 type="number"
@@ -252,24 +248,12 @@ export default function ProductFormModal({ isOpen, onClose, product, onSaved }) 
                                 required
                                 value={formData.low_stock_threshold}
                                 onChange={(e) => setFormData({ ...formData, low_stock_threshold: e.target.value })}
-                                placeholder="e.g. 5, 10, 20"
+                                placeholder="10"
                                 className={`w-full h-10 px-3 rounded-xl bg-slate-50/70 border ${
-                                    errors.low_stock_threshold ? 'border-rose-500' : 'border-amber-200'
+                                    errors.low_stock_threshold ? 'border-rose-500' : 'border-slate-200'
                                 } text-slate-900 placeholder-slate-400 text-xs focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors`}
                             />
                             {errors.low_stock_threshold && <p className="text-rose-600 text-xs mt-1">{errors.low_stock_threshold[0]}</p>}
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-400 mb-1">
-                                Alert Threshold Guide
-                            </label>
-                            <div className="h-10 px-3 rounded-xl bg-amber-50/60 border border-amber-200/80 text-amber-800 flex items-center space-x-2 text-xs">
-                                <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                                <span className="text-[11px] leading-tight font-medium">
-                                    Alert triggers automatically when stock ≤ this limit.
-                                </span>
-                            </div>
                         </div>
                     </div>
 
