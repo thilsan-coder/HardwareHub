@@ -80,7 +80,7 @@ export default function HardwareHubApp() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50/70 text-slate-800 flex font-sans antialiased overflow-hidden">
+        <div className="min-h-screen bg-slate-100/70 text-slate-800 flex font-sans antialiased overflow-hidden">
             {/* Desktop Sidebar */}
             <div className="hidden md:flex h-screen sticky top-0 shrink-0">
                 <Sidebar
@@ -99,7 +99,7 @@ export default function HardwareHubApp() {
                         className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
                         onClick={() => setSidebarOpen(false)}
                     />
-                    <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-2xl">
+                    <div className="relative flex-1 flex flex-col max-w-xs w-full bg-slate-900 shadow-2xl">
                         <Sidebar
                             user={user}
                             activePage={activePage}
@@ -115,7 +115,7 @@ export default function HardwareHubApp() {
             )}
 
             {/* Main Application Area */}
-            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-slate-50/70">
+            <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-slate-100/70">
                 <TopBar
                     activePage={activePage}
                     toggleSidebar={() => setSidebarOpen(!sidebarOpen)}

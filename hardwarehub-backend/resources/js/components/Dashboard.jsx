@@ -72,39 +72,43 @@ export default function Dashboard({ setActivePage }) {
 
     return (
         <div className="space-y-6 w-full">
-            {/* Top Workspace Banner Header */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 lg:p-9 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
-                <div className="space-y-2">
+            {/* Top Workspace Banner Header (Rich Navy/Slate with Indigo Accents) */}
+            <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md relative overflow-hidden text-white">
+                {/* Ambient Glows */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20"></div>
+
+                <div className="relative z-10 space-y-2">
                     <div className="flex items-center space-x-2.5">
-                        <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70 text-xs font-semibold">
+                        <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-indigo-300 border border-white/10 text-xs font-semibold">
                             <span>Overview & Diagnostics</span>
                         </span>
-                        <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/70 text-xs font-medium">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-medium">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span>All Systems Live</span>
                         </span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                         Store Inventory Command Center
                     </h1>
-                    <p className="text-xs sm:text-sm text-slate-500 max-w-3xl">
+                    <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
                         Real-time hardware stock analytics, live catalog health tracking, and automated threshold alerts.
                     </p>
                 </div>
 
-                <div className="flex items-center space-x-3">
+                <div className="relative z-10 flex items-center space-x-3">
                     <button
                         onClick={fetchStatsAndProducts}
                         disabled={loading}
-                        className="p-3 rounded-xl bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200/80 text-xs font-semibold transition-colors shadow-xs"
+                        className="p-3 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white border border-white/10 text-xs font-semibold transition-colors shadow-xs cursor-pointer"
                         title="Refresh metrics"
                     >
-                        <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-4 h-4 text-slate-200 ${loading ? 'animate-spin' : ''}`} />
                     </button>
 
                     <button
                         onClick={() => setActivePage('products')}
-                        className="flex items-center space-x-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-600/20 transition-all active:scale-95 cursor-pointer"
+                        className="flex items-center space-x-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer"
                     >
                         <Package className="w-4 h-4 stroke-[2.2]" />
                         <span>Manage Products</span>
@@ -119,12 +123,12 @@ export default function Dashboard({ setActivePage }) {
                 </div>
             )}
 
-            {/* 4-KPI Metric Cards (Grand & Spacious) */}
+            {/* 4-KPI Metric Cards (Grand & Spacious with Accent Borders) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 {/* Total Catalog */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-slate-300">
+                <div className="bg-white border border-slate-200/80 border-t-4 border-t-indigo-600 rounded-2xl p-6 shadow-xs transition-all hover:shadow-md">
                     <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Products</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Products</span>
                         <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
                             <Package className="w-5 h-5" />
                         </div>
@@ -141,9 +145,9 @@ export default function Dashboard({ setActivePage }) {
                 </div>
 
                 {/* Healthy Stock */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-emerald-200">
+                <div className="bg-white border border-slate-200/80 border-t-4 border-t-emerald-500 rounded-2xl p-6 shadow-xs transition-all hover:shadow-md">
                     <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Healthy Stock</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Healthy Stock</span>
                         <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                             <CheckCircle2 className="w-5 h-5" />
                         </div>
@@ -161,7 +165,7 @@ export default function Dashboard({ setActivePage }) {
                 </div>
 
                 {/* Low Stock Alert */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-amber-300">
+                <div className="bg-white border border-slate-200/80 border-t-4 border-t-amber-500 rounded-2xl p-6 shadow-xs transition-all hover:shadow-md">
                     <div className="flex items-center justify-between text-slate-500">
                         <span className="text-xs font-bold uppercase tracking-wider text-amber-700">Low Stock Alerts</span>
                         <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
@@ -186,9 +190,9 @@ export default function Dashboard({ setActivePage }) {
                 </div>
 
                 {/* Out of Stock */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-xs transition-all hover:border-rose-200">
+                <div className="bg-white border border-slate-200/80 border-t-4 border-t-rose-500 rounded-2xl p-6 shadow-xs transition-all hover:shadow-md">
                     <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-xs font-bold uppercase tracking-wider text-rose-500">Out of Stock</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-rose-600">Out of Stock</span>
                         <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
                             <XCircle className="w-5 h-5" />
                         </div>

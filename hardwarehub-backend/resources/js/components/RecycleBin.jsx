@@ -171,13 +171,13 @@ export default function RecycleBin({ setActivePage }) {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50/60 border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                                <th className="py-3 px-5">SKU</th>
-                                <th className="py-3 px-5">Product Name</th>
-                                <th className="py-3 px-5">Unit Price</th>
-                                <th className="py-3 px-5">Quantity</th>
-                                <th className="py-3 px-5">Deleted Timestamp</th>
-                                <th className="py-3 px-5 text-right">Actions</th>
+                            <tr className="bg-slate-100/90 border-b border-slate-200 text-[11px] font-bold text-slate-700 uppercase tracking-wider select-none">
+                                <th className="py-3.5 px-5">SKU</th>
+                                <th className="py-3.5 px-5">Product Name</th>
+                                <th className="py-3.5 px-5">Unit Price</th>
+                                <th className="py-3.5 px-5">Quantity</th>
+                                <th className="py-3.5 px-5">Deleted Timestamp</th>
+                                <th className="py-3.5 px-5 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-xs">
