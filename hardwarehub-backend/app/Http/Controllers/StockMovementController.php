@@ -148,4 +148,99 @@ class StockMovementController extends Controller
             ], 201);
         });
     }
+
+    /**
+     * Get a single stock movement details.
+     */
+    public function show(int $id): JsonResponse
+    {
+        $movement = StockMovement::with(['product' => fn ($q) => $q->withTrashed(), 'user'])
+            ->findOrFail($id);
+
+        return response()->json([
+            'status' => 'success',
+            'movement' => [
+                'id' => $movement->id,
+                'type' => $movement->type,
+                'quantity_changed' => (int) $movement->quantity_changed,
+                'previous_stock' => (int) $movement->previous_stock,
+                'new_stock' => (int) $movement->new_stock,
+                'reason' => $movement->reason ?: 'Standard stock update',
+                'created_at' => $movement->created_at?->format('M d, Y h:i A'),
+                'created_at_iso' => $movement->created_at?->toISOString(),
+                'product' => $movement->product ? [
+                    'id' => $movement->product->id,
+                    'name' => $movement->product->name,
+                    'sku' => $movement->product->sku,
+                    'category' => $movement->product->category ?? 'General',
+                    'price' => (float) $movement->product->price,
+                    'is_deleted' => (bool) $movement->product->trashed(),
+                ] : null,
+                'user' => $movement->user ? [
+                    'id' => $movement->user->id,
+                    'name' => $movement->user->name,
+                    'email' => $movement->user->email,
+                ] : [
+                    'id' => null,
+                    'name' => 'System Administrator',
+                    'email' => null,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Update stock movement reason or reference note.
+     */
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $movement = StockMovement::with(['product', 'user'])->findOrFail($id);
+
+        $validated = $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $movement->update([
+            'reason' => trim($validated['reason']),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Stock movement reference notes updated successfully.',
+            'movement' => $movement,
+        ]);
+    }
+
+    /**
+     * Delete / Void a stock movement record and automatically revert inventory balance.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        return DB::transaction(function () use ($id) {
+            $movement = StockMovement::findOrFail($id);
+            $product = Product::lockForUpdate()->find($movement->product_id);
+
+            if ($product) {
+                // Revert stock back according to original movement type
+                if ($movement->type === 'in') {
+                    // Deduct what was added
+                    $product->quantity = max(0, $product->quantity - abs($movement->quantity_changed));
+                } elseif ($movement->type === 'out' || $movement->type === 'damage') {
+                    // Add back what was removed
+                    $product->quantity = $product->quantity + abs($movement->quantity_changed);
+                } elseif ($movement->type === 'adjustment') {
+                    // Restore previous stock
+                    $product->quantity = max(0, $movement->previous_stock);
+                }
+                $product->save();
+            }
+
+            $movement->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Stock movement deleted and inventory stock balance safely reverted.',
+            ]);
+        });
+    }
 }

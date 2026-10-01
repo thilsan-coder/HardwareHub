@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import { AlertOctagon, Trash2, X, Loader2 } from 'lucide-react';
 
-export default function PermanentDeleteModal({ isOpen, onClose, product, onDeleted }) {
+export default function PermanentDeleteModal({ isOpen, onClose, product, onDeleted, type = 'product' }) {
     const [deleting, setDeleting] = useState(false);
     const [error, setError] = useState(null);
 
     if (!isOpen || !product) return null;
+
+    const isMovement = type === 'movement';
 
     const handleForceDelete = async () => {
         setDeleting(true);
         setError(null);
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
+        const endpoint = isMovement 
+            ? `/api/web/recycle-bin/stock-movements/${product.id}/force-delete`
+            : `/api/web/recycle-bin/${product.id}/force-delete`;
+
         try {
-            const response = await fetch(`/api/web/recycle-bin/${product.id}/force-delete`, {
+            const response = await fetch(endpoint, {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
@@ -23,20 +29,20 @@ export default function PermanentDeleteModal({ isOpen, onClose, product, onDelet
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.message || 'Failed to permanently delete product');
+                throw new Error(data.message || 'Failed to permanently delete record');
             }
 
             onDeleted(product.id);
             onClose();
         } catch (err) {
-            setError(err.message || 'Error occurred while permanently deleting product');
+            setError(err.message || 'Error occurred while permanently deleting record');
         } finally {
             setDeleting(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 select-none">
             {/* Backdrop */}
             <div 
                 className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
@@ -60,7 +66,18 @@ export default function PermanentDeleteModal({ isOpen, onClose, product, onDelet
                 <div className="space-y-1.5">
                     <h3 className="text-sm font-semibold text-slate-900">Permanent Deletion Warning</h3>
                     <p className="text-xs text-slate-600 leading-relaxed">
-                        Are you sure you want to permanently purge <span className="font-semibold text-slate-900">{product.name}</span> (<span className="font-mono text-slate-700">{product.sku}</span>)?
+                        {isMovement ? (
+                            <>
+                                Are you sure you want to permanently purge stock movement record{' '}
+                                <span className="font-bold text-slate-900">LOG-#{String(product.id).padStart(5, '0')}</span>?
+                            </>
+                        ) : (
+                            <>
+                                Are you sure you want to permanently purge{' '}
+                                <span className="font-semibold text-slate-900">{product.name}</span>{' '}
+                                (<span className="font-mono text-slate-700">{product.sku}</span>)?
+                            </>
+                        )}
                     </p>
                     <p className="text-[11px] text-rose-800 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/80">
                         Caution: This action is irreversible. All record history will be permanently erased.
@@ -85,7 +102,7 @@ export default function PermanentDeleteModal({ isOpen, onClose, product, onDelet
                         type="button"
                         onClick={handleForceDelete}
                         disabled={deleting}
-                        className="flex items-center space-x-1.5 px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm transition-all disabled:opacity-50 active:scale-95"
+                        className="flex items-center space-x-1.5 px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-sm transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
                     >
                         {deleting ? (
                             <>

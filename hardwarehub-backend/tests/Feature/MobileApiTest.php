@@ -211,4 +211,38 @@ class MobileApiTest extends TestCase
 
         $meResponse->assertStatus(401);
     }
+
+    public function test_mobile_recycle_bin_list_restore_and_force_delete(): void
+    {
+        $user = User::factory()->create();
+
+        $product = Product::create([
+            'name' => 'Paint Roller 9-inch',
+            'sku' => 'PNT-ROL-001',
+            'price' => 8.99,
+            'quantity' => 14,
+            'category' => 'Paints',
+            'status' => 'active',
+        ]);
+        $product->delete(); // Soft delete
+
+        // 1. List Recycle Bin via Mobile API
+        $listRes = $this->actingAs($user, 'sanctum')->getJson('/api/v1/recycle-bin');
+        $listRes->assertStatus(200)
+            ->assertJsonStructure(['status', 'count', 'products'])
+            ->assertJsonPath('count', 1);
+
+        // 2. Restore Product via Mobile API
+        $restoreRes = $this->actingAs($user, 'sanctum')->postJson("/api/v1/recycle-bin/{$product->id}/restore");
+        $restoreRes->assertStatus(200)
+            ->assertJsonPath('status', 'success');
+        $this->assertNull($product->fresh()->deleted_at);
+
+        // 3. Force Delete via Mobile API
+        $product->delete();
+        $forceRes = $this->actingAs($user, 'sanctum')->deleteJson("/api/v1/recycle-bin/{$product->id}/force-delete");
+        $forceRes->assertStatus(200)
+            ->assertJsonPath('status', 'success');
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+    }
 }

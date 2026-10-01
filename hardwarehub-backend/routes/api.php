@@ -41,5 +41,10 @@ Route::prefix('v1')->group(function () {
 
         // Quick Mobile Stock Adjustment
         Route::post('/products/{id}/adjust-stock', [ProductController::class, 'adjustStock'])->name('api.v1.products.adjust_stock');
+
+        // Mobile Recycle Bin & Soft Deletes
+        Route::get('/recycle-bin', [\App\Http\Controllers\Api\V1\RecycleBinController::class, 'index'])->name('api.v1.recycle_bin.index');
+        Route::post('/recycle-bin/{id}/restore', [\App\Http\Controllers\Api\V1\RecycleBinController::class, 'restore'])->name('api.v1.recycle_bin.restore');
+        Route::delete('/recycle-bin/{id}/force-delete', [\App\Http\Controllers\Api\V1\RecycleBinController::class, 'forceDelete'])->name('api.v1.recycle_bin.force_delete');
     });
 });
