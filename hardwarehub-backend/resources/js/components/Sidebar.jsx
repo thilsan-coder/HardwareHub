@@ -69,7 +69,7 @@ export default function Sidebar({ user, activePage, setActivePage, onLogout, log
                                 <span className="text-base font-bold text-slate-900 tracking-tight">Hardware</span>
                                 <span className="text-base font-bold text-indigo-600">Hub</span>
                             </div>
-                            <p className="text-[10px] font-medium text-slate-400 -mt-0.5">Enterprise POS</p>
+                            <p className="text-[10px] font-medium text-slate-400 -mt-0.5">Inventory Suite</p>
                         </div>
                     </div>
                 </div>
