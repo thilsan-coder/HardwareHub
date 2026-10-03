@@ -12,7 +12,6 @@ class StockMovementService {
   Future<List<StockMovementModel>> getStockMovements({
     String? search,
     String? type,
-        : '';
     int? productId,
   }) async {
     final queryParams = <String, String>{};
@@ -22,6 +21,7 @@ class StockMovementService {
 
     final queryString = queryParams.isNotEmpty
         ? '?${queryParams.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&')}'
+        : '';
 
     final res = await _api.get('/stock-movements$queryString');
 
