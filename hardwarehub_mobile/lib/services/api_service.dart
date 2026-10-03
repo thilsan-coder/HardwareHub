@@ -34,8 +34,8 @@ class ApiService {
 
   // Known candidate URLs (USB ADB reverse, current Wi-Fi LAN, previous LAN, Emulator)
   static final List<String> _candidateDefaults = [
-    'http://127.0.0.1:8000/api/v1',
     'http://192.168.1.3:8000/api/v1',
+    'http://127.0.0.1:8000/api/v1',
     'http://192.168.1.13:8000/api/v1',
     'http://10.0.2.2:8000/api/v1',
     'http://localhost:8000/api/v1',
@@ -53,7 +53,9 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_keyBaseUrl);
     if (saved != null && saved.trim().isNotEmpty) {
-      list.add(saved.trim());
+      if (!list.contains(saved.trim())) {
+        list.add(saved.trim());
+      }
     }
 
     // 3. Add default candidates
@@ -116,9 +118,8 @@ class ApiService {
     return headers;
   }
 
-  /// Multi-URL Resilient Fallback Engine
-  /// Automatically tries working base URLs until a connection is made,
-  /// then locks that URL for future requests so login and data never freeze.
+  /// Multi-URL Fast Fallback Engine
+  /// Rapidly connects to the active backend across Wi-Fi or USB without waiting or dropping requests.
   Future<ApiResponse> _executeWithAutoFallback(
     Future<http.Response> Function(String baseUrl) requestFn,
   ) async {
@@ -127,7 +128,8 @@ class ApiService {
 
     for (int i = 0; i < candidates.length; i++) {
       final candidate = candidates[i];
-      final timeoutDuration = (i == 0) ? const Duration(seconds: 8) : const Duration(seconds: 3);
+      // Fast probe: 3.5s per candidate so fallback happens immediately if USB/Wi-Fi is switched
+      final timeoutDuration = const Duration(milliseconds: 3500);
       try {
         final response = await requestFn(candidate).timeout(timeoutDuration);
 

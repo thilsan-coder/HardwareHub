@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/dashboard_stats_model.dart';
 import '../models/product_model.dart';
 import 'api_service.dart';
@@ -9,16 +11,45 @@ class ProductService {
 
   final ApiService _api = ApiService();
 
+  static const String _keyCachedSummary = 'cached_dashboard_summary_v2';
+  static const String _keyCachedProducts = 'cached_products_list_v2';
+
+  // In-memory cache
+  DashboardStatsModel? _inMemorySummary;
+  List<ProductModel>? _inMemoryProducts;
+
+  Future<DashboardStatsModel?> getCachedDashboardSummary() async {
+    if (_inMemorySummary != null) return _inMemorySummary;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = prefs.getString(_keyCachedSummary);
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        final decoded = jsonDecode(jsonStr);
+        if (decoded is Map<String, dynamic>) {
+          _inMemorySummary = DashboardStatsModel.fromJson(decoded);
+          return _inMemorySummary;
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
   // 1. Dashboard Metrics Summary
   Future<DashboardStatsModel?> getDashboardSummary() async {
     final res = await _api.get('/dashboard/summary');
     if (res.success && res.data != null) {
       final map = res.data['data'] ?? res.data['summary'] ?? (res.data is Map<String, dynamic> ? res.data : null);
       if (map != null && map is Map<String, dynamic>) {
-        return DashboardStatsModel.fromJson(map);
+        final model = DashboardStatsModel.fromJson(map);
+        _inMemorySummary = model;
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_keyCachedSummary, jsonEncode(map));
+        } catch (_) {}
+        return model;
       }
     }
-    return null;
+    return await getCachedDashboardSummary();
   }
 
   // 2. Products List (with search & filter)
@@ -37,10 +68,37 @@ class ProductService {
     if (res.success && res.data != null) {
       final list = res.data['data'] ?? res.data['products'] ?? (res.data is List ? res.data : null);
       if (list is List) {
-        return list.map((item) => ProductModel.fromJson(item)).toList();
+        final items = list.map((item) => ProductModel.fromJson(item)).toList();
+        if (search == null && (category == null || category == 'All') && (status == null || status == 'All')) {
+          _inMemoryProducts = items;
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(_keyCachedProducts, jsonEncode(list));
+          } catch (_) {}
+        }
+        return items;
       }
     }
-    return [];
+
+    // If request failed on default view, return cached products
+    if (search == null && (category == null || category == 'All') && (status == null || status == 'All')) {
+      if (_inMemoryProducts != null && _inMemoryProducts!.isNotEmpty) {
+        return _inMemoryProducts!;
+      }
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final jsonStr = prefs.getString(_keyCachedProducts);
+        if (jsonStr != null && jsonStr.isNotEmpty) {
+          final decoded = jsonDecode(jsonStr);
+          if (decoded is List) {
+            _inMemoryProducts = decoded.map((i) => ProductModel.fromJson(i)).toList();
+            return _inMemoryProducts!;
+          }
+        }
+      } catch (_) {}
+    }
+
+    return _inMemoryProducts ?? [];
   }
 
   // 3. Get Single Product
@@ -57,17 +115,30 @@ class ProductService {
 
   // 4. Create Product
   Future<ApiResponse> createProduct(Map<String, dynamic> data) async {
-    return await _api.post('/products', data);
+    final res = await _api.post('/products', data);
+    if (res.success) {
+      // Invalidate cache to trigger fresh pull
+      getDashboardSummary();
+    }
+    return res;
   }
 
   // 5. Update Product
   Future<ApiResponse> updateProduct(int id, Map<String, dynamic> data) async {
-    return await _api.put('/products/$id', data);
+    final res = await _api.put('/products/$id', data);
+    if (res.success) {
+      getDashboardSummary();
+    }
+    return res;
   }
 
   // 6. Soft Delete Product (Move to Recycle Bin)
   Future<ApiResponse> deleteProduct(int id) async {
-    return await _api.delete('/products/$id');
+    final res = await _api.delete('/products/$id');
+    if (res.success) {
+      getDashboardSummary();
+    }
+    return res;
   }
 
   // 7. Get Recycle Bin Products List
@@ -89,7 +160,11 @@ class ProductService {
 
   // 8. Restore Product from Recycle Bin
   Future<ApiResponse> restoreProduct(int id) async {
-    return await _api.post('/recycle-bin/$id/restore', {});
+    final res = await _api.post('/recycle-bin/$id/restore', {});
+    if (res.success) {
+      getDashboardSummary();
+    }
+    return res;
   }
 
   // 9. Permanently Force Delete Product

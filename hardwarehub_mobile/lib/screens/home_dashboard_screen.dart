@@ -35,9 +35,16 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   }
 
   Future<void> _loadDashboardData() async {
-    if (_stats == null) {
+    final cached = await ProductService().getCachedDashboardSummary();
+    if (cached != null && mounted) {
+      setState(() {
+        _stats = cached;
+        _isLoading = false;
+      });
+    } else if (_stats == null) {
       setState(() => _isLoading = true);
     }
+
     final user = await AuthService().fetchCurrentUser();
     final stats = await ProductService().getDashboardSummary();
 
