@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
 import '../models/product_model.dart';
+import '../services/app_event_bus.dart';
 import '../services/product_service.dart';
 import '../widgets/status_badge.dart';
 import 'product_form_screen.dart';
@@ -24,6 +25,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
     _loadProduct();
+    AppEventBus().onDataMutated.addListener(_onDataMutated);
+  }
+
+  @override
+  void dispose() {
+    AppEventBus().onDataMutated.removeListener(_onDataMutated);
+    super.dispose();
+  }
+
+  void _onDataMutated() {
+    if (mounted && !_isDeleting) {
+      _loadProduct();
+    }
   }
 
   Future<void> _loadProduct() async {

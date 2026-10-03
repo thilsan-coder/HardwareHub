@@ -5,6 +5,7 @@ import '../config/theme.dart';
 import '../models/dashboard_stats_model.dart';
 import '../models/user_model.dart';
 import '../services/api_service.dart';
+import '../services/app_event_bus.dart';
 import '../services/auth_service.dart';
 import '../services/product_service.dart';
 import '../widgets/metric_card.dart';
@@ -32,6 +33,19 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   void initState() {
     super.initState();
     _loadDashboardData();
+    AppEventBus().onDataMutated.addListener(_onDataMutated);
+  }
+
+  @override
+  void dispose() {
+    AppEventBus().onDataMutated.removeListener(_onDataMutated);
+    super.dispose();
+  }
+
+  void _onDataMutated() {
+    if (mounted) {
+      _loadDashboardData(forceRefresh: true);
+    }
   }
 
   Future<void> _loadDashboardData({bool forceRefresh = false}) async {

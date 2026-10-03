@@ -1,5 +1,7 @@
 import '../models/stock_movement_model.dart';
 import 'api_service.dart';
+import 'app_event_bus.dart';
+import 'product_service.dart';
 
 class StockMovementService {
   static final StockMovementService _instance = StockMovementService._internal();
@@ -45,17 +47,32 @@ class StockMovementService {
 
   // 3. Create Stock Movement (IN / OUT / ADJUSTMENT / DAMAGE)
   Future<ApiResponse> createStockMovement(Map<String, dynamic> data) async {
-    return await _api.post('/stock-movements', data);
+    final res = await _api.post('/stock-movements', data);
+    if (res.success) {
+      await ProductService().clearCache();
+      AppEventBus().notifyDataMutated();
+    }
+    return res;
   }
 
   // 4. Update Stock Movement
   Future<ApiResponse> updateStockMovement(int id, Map<String, dynamic> data) async {
-    return await _api.put('/stock-movements/$id', data);
+    final res = await _api.put('/stock-movements/$id', data);
+    if (res.success) {
+      await ProductService().clearCache();
+      AppEventBus().notifyDataMutated();
+    }
+    return res;
   }
 
   // 5. Soft Delete Stock Movement
   Future<ApiResponse> deleteStockMovement(int id) async {
-    return await _api.delete('/stock-movements/$id');
+    final res = await _api.delete('/stock-movements/$id');
+    if (res.success) {
+      await ProductService().clearCache();
+      AppEventBus().notifyDataMutated();
+    }
+    return res;
   }
 
   // 6. Recycle Bin Movements
@@ -77,11 +94,21 @@ class StockMovementService {
 
   // 7. Restore Movement
   Future<ApiResponse> restoreStockMovement(int id) async {
-    return await _api.post('/recycle-bin/stock-movements/$id/restore', {});
+    final res = await _api.post('/recycle-bin/stock-movements/$id/restore', {});
+    if (res.success) {
+      await ProductService().clearCache();
+      AppEventBus().notifyDataMutated();
+    }
+    return res;
   }
 
   // 8. Force Delete Movement
   Future<ApiResponse> forceDeleteStockMovement(int id) async {
-    return await _api.delete('/recycle-bin/stock-movements/$id/force-delete');
+    final res = await _api.delete('/recycle-bin/stock-movements/$id/force-delete');
+    if (res.success) {
+      await ProductService().clearCache();
+      AppEventBus().notifyDataMutated();
+    }
+    return res;
   }
 }

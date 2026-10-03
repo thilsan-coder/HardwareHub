@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/dashboard_stats_model.dart';
 import '../models/product_model.dart';
 import 'api_service.dart';
+import 'app_event_bus.dart';
 
 class ProductService {
   static final ProductService _instance = ProductService._internal();
@@ -128,6 +129,7 @@ class ProductService {
     final res = await _api.post('/products', data);
     if (res.success) {
       await clearCache();
+      AppEventBus().notifyDataMutated();
     }
     return res;
   }
@@ -137,6 +139,7 @@ class ProductService {
     final res = await _api.put('/products/$id', data);
     if (res.success) {
       await clearCache();
+      AppEventBus().notifyDataMutated();
     }
     return res;
   }
@@ -146,6 +149,7 @@ class ProductService {
     final res = await _api.delete('/products/$id');
     if (res.success) {
       await clearCache();
+      AppEventBus().notifyDataMutated();
     }
     return res;
   }
@@ -172,6 +176,7 @@ class ProductService {
     final res = await _api.post('/recycle-bin/$id/restore', {});
     if (res.success) {
       await clearCache();
+      AppEventBus().notifyDataMutated();
     }
     return res;
   }
@@ -181,6 +186,7 @@ class ProductService {
     final res = await _api.delete('/recycle-bin/$id/force-delete');
     if (res.success) {
       await clearCache();
+      AppEventBus().notifyDataMutated();
     }
     return res;
   }

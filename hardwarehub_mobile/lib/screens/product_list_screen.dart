@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../config/constants.dart';
 import '../config/theme.dart';
 import '../models/product_model.dart';
+import '../services/app_event_bus.dart';
 import '../services/product_service.dart';
 import '../widgets/product_card.dart';
 import 'product_detail_screen.dart';
@@ -44,12 +45,20 @@ class _ProductListScreenState extends State<ProductListScreen> with AutomaticKee
       _selectedStatus = widget.initialStatus!;
     }
     _loadProducts();
+    AppEventBus().onDataMutated.addListener(_onDataMutated);
   }
 
   @override
   void dispose() {
+    AppEventBus().onDataMutated.removeListener(_onDataMutated);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onDataMutated() {
+    if (mounted) {
+      _loadProducts(forceRefresh: true);
+    }
   }
 
   Future<void> _loadProducts({bool forceRefresh = false}) async {

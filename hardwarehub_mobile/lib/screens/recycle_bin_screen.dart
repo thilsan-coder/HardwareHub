@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../config/theme.dart';
 import '../models/product_model.dart';
 import '../models/stock_movement_model.dart';
+import '../services/app_event_bus.dart';
 import '../services/product_service.dart';
 import '../services/stock_movement_service.dart';
 import '../widgets/status_badge.dart';
@@ -33,13 +34,21 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> with SingleTickerPr
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _loadAllRecycleData();
+    AppEventBus().onDataMutated.addListener(_onDataMutated);
   }
 
   @override
   void dispose() {
+    AppEventBus().onDataMutated.removeListener(_onDataMutated);
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onDataMutated() {
+    if (mounted) {
+      _loadAllRecycleData();
+    }
   }
 
   Future<void> _loadAllRecycleData() async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../config/theme.dart';
 import '../models/stock_movement_model.dart';
+import '../services/app_event_bus.dart';
 import '../services/stock_movement_service.dart';
 import '../widgets/stock_movement_card.dart';
 import 'stock_movement_form_screen.dart';
@@ -28,12 +29,20 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> with Automa
   void initState() {
     super.initState();
     _loadMovements();
+    AppEventBus().onDataMutated.addListener(_onDataMutated);
   }
 
   @override
   void dispose() {
+    AppEventBus().onDataMutated.removeListener(_onDataMutated);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onDataMutated() {
+    if (mounted) {
+      _loadMovements(forceRefresh: true);
+    }
   }
 
   Future<void> _loadMovements({bool forceRefresh = false}) async {
