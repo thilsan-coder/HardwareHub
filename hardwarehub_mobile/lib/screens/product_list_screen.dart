@@ -109,29 +109,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.slate50,
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.primary.withAlpha(120),
-              blurRadius: 14,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: FloatingActionButton.extended(
-          onPressed: _navigateToCreate,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          icon: const Icon(Icons.add_rounded, color: Colors.white),
-          label: const Text(
-            'New SKU',
-            style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2),
-          ),
-        ),
-      ),
       body: Column(
         children: [
           // Sleek Minimalist Search and Filters Header
@@ -245,9 +222,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
             ),
           ),
 
-          // Product count summary bar
+          // Product count summary bar with sleek inline "+ New SKU" button
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: const BoxDecoration(
               color: AppTheme.slate100,
               border: Border(
@@ -258,40 +235,84 @@ class _ProductListScreenState extends State<ProductListScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'SHOWING ${_products.length} PRODUCT${_products.length == 1 ? '' : 'S'}',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.6,
-                    color: AppTheme.slate700,
-                  ),
-                ),
-                if (_selectedCategory != 'All' || _selectedStatus != 'All' || _searchQuery.isNotEmpty)
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedCategory = 'All';
-                        _selectedStatus = 'All';
-                        _searchQuery = '';
-                        _searchController.clear();
-                      });
-                      _loadProducts();
-                    },
-                    child: const Text(
-                      'Clear Filters',
-                      style: TextStyle(
+                Row(
+                  children: [
+                    Text(
+                      'SHOWING ${_products.length} PRODUCT${_products.length == 1 ? '' : 'S'}',
+                      style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
-                        color: AppTheme.primary,
+                        letterSpacing: 0.6,
+                        color: AppTheme.slate700,
+                      ),
+                    ),
+                    if (_selectedCategory != 'All' || _selectedStatus != 'All' || _searchQuery.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedCategory = 'All';
+                            _selectedStatus = 'All';
+                            _searchQuery = '';
+                            _searchController.clear();
+                          });
+                          _loadProducts();
+                        },
+                        child: const Text(
+                          'Clear',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                // Inline + New SKU Action Pill (Never obscures products!)
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _navigateToCreate,
+                    borderRadius: BorderRadius.circular(20),
+                    child: Ink(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: AppTheme.primaryGradient,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primary.withAlpha(70),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.add_rounded, color: Colors.white, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            'New SKU',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                ),
               ],
             ),
           ),
 
-          // Product List view
+          // Product List view with clean padding
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
@@ -302,7 +323,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         color: AppTheme.primary,
                         backgroundColor: Colors.white,
                         child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 80),
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                           itemCount: _products.length,
                           itemBuilder: (context, index) {
                             final product = _products[index];

@@ -64,62 +64,95 @@ class _LoginScreenState extends State<LoginScreen> {
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: const [
-            Icon(Icons.dns_rounded, color: AppTheme.primary, size: 22),
-            SizedBox(width: 8),
-            Text('Server Connection URL', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.slate900)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Configure backend API URL:', style: TextStyle(fontSize: 12, color: AppTheme.slate600)),
-            const SizedBox(height: 10),
-            TextField(
-              controller: urlController,
-              decoration: const InputDecoration(
-                hintText: 'http://192.168.1.13:8000/api/v1',
-                prefixIcon: Icon(Icons.link_rounded),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppTheme.slate100,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppTheme.slate200),
-              ),
-              child: const Text(
-                '• Wi-Fi Mobile: http://192.168.1.13:8000/api/v1\n• Emulator: http://10.0.2.2:8000/api/v1\n• Local PC: http://127.0.0.1:8000/api/v1',
-                style: TextStyle(fontSize: 11, color: AppTheme.slate600, height: 1.4),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.slate600)),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) => AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: const [
+              Icon(Icons.dns_rounded, color: AppTheme.primary, size: 22),
+              SizedBox(width: 8),
+              Text('Server Connection URL', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.slate900)),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              await ApiService().setBaseUrl(urlController.text);
-              if (ctx.mounted) Navigator.pop(ctx);
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Quick Presets (Tap to select):', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppTheme.slate700)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: [
+                  ActionChip(
+                    avatar: const Icon(Icons.usb_rounded, size: 16, color: AppTheme.primary),
+                    label: const Text('🔌 USB Mode', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                    backgroundColor: AppTheme.primary.withAlpha(20),
+                    side: BorderSide(color: AppTheme.primary.withAlpha(50)),
+                    onPressed: () {
+                      setModalState(() {
+                        urlController.text = 'http://127.0.0.1:8000/api/v1';
+                      });
+                    },
+                  ),
+                  ActionChip(
+                    avatar: const Icon(Icons.wifi_rounded, size: 16, color: AppTheme.success),
+                    label: const Text('📶 Wi-Fi (192.168.1.3)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                    backgroundColor: AppTheme.success.withAlpha(20),
+                    side: BorderSide(color: AppTheme.success.withAlpha(50)),
+                    onPressed: () {
+                      setModalState(() {
+                        urlController.text = 'http://192.168.1.3:8000/api/v1';
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              const Text('Or Custom API URL:', style: TextStyle(fontSize: 12, color: AppTheme.slate600)),
+              const SizedBox(height: 6),
+              TextField(
+                controller: urlController,
+                decoration: const InputDecoration(
+                  hintText: 'http://192.168.1.3:8000/api/v1',
+                  prefixIcon: Icon(Icons.link_rounded),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.slate100,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppTheme.slate200),
+                ),
+                child: const Text(
+                  '💡 The app automatically detects whether you are using USB cable or Wi-Fi. If connection ever drops, tap a preset above.',
+                  style: TextStyle(fontSize: 11, color: AppTheme.slate600, height: 1.4),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppTheme.slate600)),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final nav = Navigator.of(ctx);
+                await ApiService().setBaseUrl(urlController.text);
+                nav.pop();
+                messenger.showSnackBar(
                   const SnackBar(content: Text('Server URL updated!'), backgroundColor: AppTheme.success),
                 );
-              }
-            },
-            child: const Text('Save'),
-          ),
-        ],
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
       ),
     );
   }

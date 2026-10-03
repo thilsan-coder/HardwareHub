@@ -12,8 +12,11 @@ class ProductService {
   // 1. Dashboard Metrics Summary
   Future<DashboardStatsModel?> getDashboardSummary() async {
     final res = await _api.get('/dashboard/summary');
-    if (res.success && res.data != null && res.data['data'] != null) {
-      return DashboardStatsModel.fromJson(res.data['data']);
+    if (res.success && res.data != null) {
+      final map = res.data['data'] ?? res.data['summary'] ?? (res.data is Map<String, dynamic> ? res.data : null);
+      if (map != null && map is Map<String, dynamic>) {
+        return DashboardStatsModel.fromJson(map);
+      }
     }
     return null;
   }

@@ -231,12 +231,6 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.slate50,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _navigateToCreate,
-        backgroundColor: AppTheme.primary,
-        icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text('Log Movement', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white)),
-      ),
       body: Column(
         children: [
           // Filter Header
@@ -282,24 +276,71 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
             ),
           ),
 
-          // Count summary
+          // Count summary with sleek inline "+ Log Movement" button
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: const BoxDecoration(
               color: AppTheme.slate100,
-              border: Border(bottom: BorderSide(color: AppTheme.slate200)),
+              border: Border(
+                top: BorderSide(color: AppTheme.slate200, width: 0.8),
+                bottom: BorderSide(color: AppTheme.slate200, width: 0.8),
+              ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${_movements.length} logged stock movement${_movements.length == 1 ? '' : 's'}',
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.slate600),
+                  '${_movements.length} LOGGED MOVEMENT${_movements.length == 1 ? '' : 'S'}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.6,
+                    color: AppTheme.slate700,
+                  ),
+                ),
+                // Inline + Log Movement Action Pill (Never blocks cards!)
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _navigateToCreate,
+                    borderRadius: BorderRadius.circular(20),
+                    child: Ink(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: AppTheme.primaryGradient,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primary.withAlpha(70),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.add_rounded, color: Colors.white, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            'Log Movement',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
 
-          // List View
+          // List View with clean padding
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator(color: AppTheme.primary))
@@ -312,7 +353,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
                             SizedBox(height: 12),
                             Text('No Stock Movements Recorded', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
                             SizedBox(height: 4),
-                            Text('Use the "Log Movement" button to record stock additions/deductions.', style: TextStyle(color: AppTheme.slate500, fontSize: 12)),
+                            Text('Use the "Log Movement" button above to record stock additions/deductions.', style: TextStyle(color: AppTheme.slate500, fontSize: 12)),
                           ],
                         ),
                       )
@@ -320,7 +361,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
                         onRefresh: _loadMovements,
                         color: AppTheme.primary,
                         child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 80),
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                           itemCount: _movements.length,
                           itemBuilder: (context, index) {
                             final m = _movements[index];
