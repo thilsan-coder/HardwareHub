@@ -21,7 +21,10 @@ class ProductListScreen extends StatefulWidget {
   State<ProductListScreen> createState() => _ProductListScreenState();
 }
 
-class _ProductListScreenState extends State<ProductListScreen> {
+class _ProductListScreenState extends State<ProductListScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final ProductService _productService = ProductService();
   final TextEditingController _searchController = TextEditingController();
 
@@ -50,7 +53,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Future<void> _loadProducts() async {
-    setState(() => _isLoading = true);
+    if (_products.isEmpty) {
+      setState(() => _isLoading = true);
+    }
     try {
       final items = await _productService.getProducts(
         search: _searchQuery.isEmpty ? null : _searchQuery,
@@ -59,19 +64,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
       );
       if (mounted) {
         setState(() {
-          _products = items;
+          if (items.isNotEmpty || _products.isEmpty || _searchQuery.isNotEmpty || _selectedCategory != 'All' || _selectedStatus != 'All') {
+            _products = items;
+          }
           _isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to load products: $e'),
-            backgroundColor: AppTheme.danger,
-          ),
-        );
       }
     }
   }
@@ -107,6 +108,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: AppTheme.slate50,
       body: Column(

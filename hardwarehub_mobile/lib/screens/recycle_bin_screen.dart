@@ -13,7 +13,10 @@ class RecycleBinScreen extends StatefulWidget {
   State<RecycleBinScreen> createState() => _RecycleBinScreenState();
 }
 
-class _RecycleBinScreenState extends State<RecycleBinScreen> with SingleTickerProviderStateMixin {
+class _RecycleBinScreenState extends State<RecycleBinScreen> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   late TabController _tabController;
   final ProductService _productService = ProductService();
   final StockMovementService _movementService = StockMovementService();
@@ -40,7 +43,9 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> with SingleTickerPr
   }
 
   Future<void> _loadAllRecycleData() async {
-    setState(() => _isLoading = true);
+    if (_deletedProducts.isEmpty && _deletedMovements.isEmpty) {
+      setState(() => _isLoading = true);
+    }
     try {
       final results = await Future.wait([
         _productService.getRecycleBinProducts(search: _searchQuery),
@@ -56,12 +61,6 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> with SingleTickerPr
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to load recycle bin: $e'),
-            backgroundColor: AppTheme.danger,
-          ),
-        );
       }
     }
   }
@@ -124,6 +123,7 @@ class _RecycleBinScreenState extends State<RecycleBinScreen> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: AppTheme.slate50,
       body: Column(

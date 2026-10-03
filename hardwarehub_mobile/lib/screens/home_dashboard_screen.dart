@@ -27,40 +27,24 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   DashboardStatsModel? _stats;
   UserModel? _user;
   bool _isLoading = true;
-  String _currentTime = '';
-  Timer? _clockTimer;
 
   @override
   void initState() {
     super.initState();
-    _updateClock();
-    _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) => _updateClock());
     _loadDashboardData();
   }
 
-  void _updateClock() {
-    if (mounted) {
-      setState(() {
-        _currentTime = DateFormat('hh:mm:ss a').format(DateTime.now());
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _clockTimer?.cancel();
-    super.dispose();
-  }
-
   Future<void> _loadDashboardData() async {
-    setState(() => _isLoading = true);
+    if (_stats == null) {
+      setState(() => _isLoading = true);
+    }
     final user = await AuthService().fetchCurrentUser();
     final stats = await ProductService().getDashboardSummary();
 
     if (mounted) {
       setState(() {
         _user = user;
-        _stats = stats;
+        if (stats != null) _stats = stats;
         _isLoading = false;
       });
     }
@@ -204,9 +188,15 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Server Time: $_currentTime',
-                        style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: Color(0xFFCBD5E1)),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text(
+                            'System Time: ',
+                            style: TextStyle(fontFamily: 'monospace', fontSize: 11, color: Color(0xFFCBD5E1)),
+                          ),
+                          _AppBarClock(),
+                        ],
                       ),
                       Text(
                         'Total SKUs: ${stats.totalProducts}',
@@ -595,21 +585,9 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             tooltip: 'Server Connection',
             onPressed: _showServerConfigDialog,
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(20),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  _currentTime,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: Colors.white),
-                ),
-              ),
-            ),
+          const Padding(
+            padding: EdgeInsets.only(right: 4),
+            child: _AppBarClock(),
           ),
           IconButton(
             icon: const Icon(Icons.logout_rounded, size: 18),
@@ -618,7 +596,10 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           ),
         ],
       ),
-      body: pages[_currentBottomNavIndex],
+      body: IndexedStack(
+        index: _currentBottomNavIndex,
+        children: pages,
+      ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -653,6 +634,56 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               label: 'Recycle Bin',
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AppBarClock extends StatefulWidget {
+  const _AppBarClock();
+
+  @override
+  State<_AppBarClock> createState() => _AppBarClockState();
+}
+
+class _AppBarClockState extends State<_AppBarClock> {
+  String _time = '';
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _update();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _update());
+  }
+
+  void _update() {
+    if (mounted) {
+      setState(() {
+        _time = DateFormat('hh:mm:ss a').format(DateTime.now());
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        decoration: BoxDecoration(
+          color: Colors.white.withAlpha(20),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          _time,
+          style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: Colors.white),
         ),
       ),
     );

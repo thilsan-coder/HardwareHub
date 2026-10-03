@@ -12,7 +12,10 @@ class StockMovementsScreen extends StatefulWidget {
   State<StockMovementsScreen> createState() => _StockMovementsScreenState();
 }
 
-class _StockMovementsScreenState extends State<StockMovementsScreen> {
+class _StockMovementsScreenState extends State<StockMovementsScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final StockMovementService _movementService = StockMovementService();
   final TextEditingController _searchController = TextEditingController();
 
@@ -34,7 +37,9 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
   }
 
   Future<void> _loadMovements() async {
-    setState(() => _isLoading = true);
+    if (_movements.isEmpty) {
+      setState(() => _isLoading = true);
+    }
     try {
       final items = await _movementService.getStockMovements(
         search: _searchQuery.isEmpty ? null : _searchQuery,
@@ -42,19 +47,15 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
       );
       if (mounted) {
         setState(() {
-          _movements = items;
+          if (items.isNotEmpty || _movements.isEmpty || _searchQuery.isNotEmpty || _selectedType != 'All') {
+            _movements = items;
+          }
           _isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to load stock ledger: $e'),
-            backgroundColor: AppTheme.danger,
-          ),
-        );
       }
     }
   }
@@ -229,6 +230,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: AppTheme.slate50,
       body: Column(

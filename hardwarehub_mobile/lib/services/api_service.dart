@@ -125,11 +125,11 @@ class ApiService {
     final candidates = await _getCandidateUrls();
     Object? lastError;
 
-    for (final candidate in candidates) {
+    for (int i = 0; i < candidates.length; i++) {
+      final candidate = candidates[i];
+      final timeoutDuration = (i == 0) ? const Duration(seconds: 8) : const Duration(seconds: 3);
       try {
-        final response = await requestFn(candidate).timeout(
-          const Duration(seconds: 4),
-        );
+        final response = await requestFn(candidate).timeout(timeoutDuration);
 
         // If we received any valid HTTP response from the server (even 4xx or 2xx),
         // it means the host is alive and reachable!
