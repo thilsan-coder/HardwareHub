@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HardwareHub — Full-Stack Project Assessment Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm 10mm 12mm;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #0f172a;
+      background-color: #ffffff;
+      line-height: 1.35;
+      font-size: 8.5pt;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page-sheet {
+      height: 275mm;
+      max-height: 275mm;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+      position: relative;
+    }
+    
+    .page-sheet:last-child {
+      page-break-after: avoid;
+    }
+
+    /* Header Banner */
+    .header-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%);
+      color: white;
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .logo-icon {
+      background: #4f46e5;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: -0.2px;
+    }
+
+    .logo-text span {
+      color: #818cf8;
+    }
+
+    .badge-status {
+      background: #10b981;
+      color: white;
+      font-size: 7.5pt;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .header-title {
+      font-size: 16pt;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .header-subtitle {
+      font-size: 8.8pt;
+      color: #cbd5e1;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.45);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .meta-label {
+      color: #94a3b8;
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 6.5pt;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-val {
+      font-weight: 700;
+      color: #f8fafc;
+      font-size: 8pt;
+    }
+
+    /* Section Typography */
+    h2 {
+      font-size: 10.5pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 3px;
+    }
+
+    h2 .section-num {
+      background: #4f46e5;
+      color: white;
+      width: 17px;
+      height: 17px;
+      border-radius: 4px;
+      font-size: 7.5pt;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h3 {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    p {
+      color: #334155;
+      margin-bottom: 6px;
+      font-size: 8pt;
+      line-height: 1.35;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0 8px 0;
+      font-size: 7.8pt;
+    }
+
+    th, td {
+      padding: 4.5px 7px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 6.8pt;
+      letter-spacing: 0.3px;
+      border-top: 1px solid #cbd5e1;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    .badge-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: #dcfce7;
+      color: #166534;
+      padding: 1.5px 6px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 6.8pt;
+    }
+
+    .badge-bonus {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: #ede9fe;
+      color: #5b21b6;
+      padding: 1.5px 6px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 6.8pt;
+    }
+
+    /* Architecture / Flow Box */
+    .arch-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 6px 0 8px 0;
+    }
+
+    .tech-box {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 7px 9px;
+      border-left: 3px solid #4f46e5;
+    }
+
+    .tech-box.web { border-left-color: #0284c7; }
+    .tech-box.mobile { border-left-color: #10b981; }
+
+    .tech-title {
+      font-size: 8pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .tech-desc {
+      font-size: 7pt;
+      color: #64748b;
+      line-height: 1.3;
+    }
+
+    /* Code Snippets */
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.2pt;
+    }
+
+    .cmd-box {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 4px 8px;
+      border-radius: 5px;
+      margin: 3px 0 5px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.2pt;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    /* Callouts */
+    .callout {
+      background: #eff6ff;
+      border-left: 3px solid #3b82f6;
+      padding: 6px 10px;
+      border-radius: 0 6px 6px 0;
+      margin: 6px 0;
+      font-size: 7.5pt;
+      color: #1e40af;
+    }
+
+    .footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 6px;
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      color: #94a3b8;
+      font-size: 7pt;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1: Executive Summary & Compliance Matrix -->
+  <div class="page-sheet">
+    <div>
+      <div class="header-banner">
+        <div class="header-top">
+          <div class="logo-container">
+            <div class="logo-icon">H</div>
+            <div class="logo-text">Hardware<span>Hub</span></div>
+          </div>
+          <div class="badge-status">Assessment 100% Complete</div>
+        </div>
+        <div class="header-title">Full-Stack Product Management Suite</div>
+        <div class="header-subtitle">Intern Assessment Report: Laravel 12 API + React Web + Flutter Mobile</div>
+        <div class="meta-grid">
+          <div class="meta-item">
+            <div class="meta-label">Backend</div>
+            <div class="meta-val">Laravel 12 / Sanctum</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Web Frontend</div>
+            <div class="meta-val">React 18 + Vite</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Mobile App</div>
+            <div class="meta-val">Flutter 3.x (Android/iOS)</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Database</div>
+            <div class="meta-val">MySQL 8.0 (XAMPP)</div>
+          </div>
+        </div>
+      </div>
+
+      <h2><span class="section-num">1</span> Executive Summary & Architecture</h2>
+      <p>
+        This project implements an enterprise-grade Product & Inventory Suite in exact compliance with the assessment guidelines. It connects a high-performance <strong>Laravel 12 REST API Gateway</strong>, a responsive <strong>React Web Portal</strong>, and a production-grade <strong>Flutter Mobile App</strong> equipped with an automatic multi-URL fallback engine for zero-config physical device connectivity.
+      </p>
+
+      <div class="tech-grid">
+        <div class="tech-box">
+          <div class="tech-title">⚡ Laravel 12 Backend</div>
+          <div class="tech-desc">Sanctum Token Authentication, RESTful endpoints, soft delete recovery, and transactional stock calculation.</div>
+        </div>
+        <div class="tech-box web">
+          <div class="tech-title">💻 React 18 Web App</div>
+          <div class="tech-desc">Tailwind CSS dark-header tokens, real-time KPI metrics, Product CRUD, and one-click CSV/PDF export.</div>
+        </div>
+        <div class="tech-box mobile">
+          <div class="tech-title">📱 Flutter Mobile App</div>
+          <div class="tech-desc">Custom Slate/Indigo design tokens, unblocked inline subheader action pills, and auto-detect USB/LAN engine.</div>
+        </div>
+      </div>
+
+      <h2><span class="section-num">2</span> Assessment Requirement Compliance Matrix</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>PDF Requirement Area</th>
+            <th>Specified Criteria</th>
+            <th>Implementation Details</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Laravel Application</strong></td>
+            <td>Login & Logout Authentication</td>
+            <td>Sanctum token & session auth with secure validation</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Authenticated Dashboard</td>
+            <td>Real-time KPIs: Total Products, Units, Valuation, Low Stock</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Users Management Page</td>
+            <td>Registered users list with role badges & timestamps</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Product Management Page</td>
+            <td>Create, View/List, Edit, and Delete with Laravel validation</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td><strong>2. Product Data Schema</strong></td>
+            <td>SKU, Name, Desc, Price, Qty, Status</td>
+            <td>Extended with Category, Cost Price, and Min Stock Alerts</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td><strong>3. Soft Delete & Recycle Bin</strong></td>
+            <td>Soft Deletes via deleted_at</td>
+            <td>Products and stock movements use SoftDeletes trait</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Recycle Bin Screen</td>
+            <td>Dedicated tab listing deleted records</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Restore & Permanent Delete</td>
+            <td>1-Click instant recovery & permanent purge options</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td><strong>4. Laravel REST API</strong></td>
+            <td>Mobile Login / Logout APIs</td>
+            <td>Sanctum Bearer token generation & revocation</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Product CRUD & Recycle APIs</td>
+            <td>Full standard REST endpoints with route protection</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td><strong>5. Flutter Mobile App</strong></td>
+            <td>Login, Dashboard, CRUD Screens</td>
+            <td>Modern multi-tab navigation, custom cards, form dialogs</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Mobile Recycle Bin Screen</td>
+            <td>Dual-tab recovery for products & stock ledger entries</td>
+            <td><span class="badge-check">✓ Completed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Bonus Extensions</strong></td>
+            <td>Stock Ledger Audit Trail</td>
+            <td>IN, OUT, ADJUSTMENT, DAMAGE balance tracking</td>
+            <td><span class="badge-bonus">★ Bonus Added</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Multi-URL Auto Fallback Engine</td>
+            <td>Auto-connects USB (127.0.0.1) & Wi-Fi LAN (192.168.1.3)</td>
+            <td><span class="badge-bonus">★ Bonus Added</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <span>HardwareHub — Intern Full-Stack Assessment Report</span>
+      <span>Page 1 of 2</span>
+    </div>
+  </div>
+
+  <!-- PAGE 2: Architecture, API Reference & How to Run -->
+  <div class="page-sheet">
+    <div>
+      <h2><span class="section-num">3</span> Database Schema & API Reference</h2>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px;">
+        <div>
+          <h3>📦 Products Table (`products`)</h3>
+          <table>
+            <thead>
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>id</code></td><td>BIGINT</td><td>PK, Auto Increment</td></tr>
+              <tr><td><code>sku</code></td><td>VARCHAR</td><td>Unique Product SKU</td></tr>
+              <tr><td><code>name</code></td><td>VARCHAR</td><td>Product Name</td></tr>
+              <tr><td><code>category</code></td><td>VARCHAR</td><td>Category Tag</td></tr>
+              <tr><td><code>selling_price</code></td><td>DECIMAL</td><td>Selling Unit Price</td></tr>
+              <tr><td><code>stock_quantity</code></td><td>INT</td><td>Real-time Units</td></tr>
+              <tr><td><code>status</code></td><td>ENUM</td><td>active / inactive</td></tr>
+              <tr><td><code>deleted_at</code></td><td>TIMESTAMP</td><td>Soft Delete Flag</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3>🔄 Stock Movements Table (`stock_movements`)</h3>
+          <table>
+            <thead>
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>id</code></td><td>BIGINT</td><td>PK, Auto Increment</td></tr>
+              <tr><td><code>product_id</code></td><td>BIGINT</td><td>FK to `products`</td></tr>
+              <tr><td><code>type</code></td><td>ENUM</td><td>in, out, adj, dmg</td></tr>
+              <tr><td><code>quantity</code></td><td>INT</td><td>Quantity Changed</td></tr>
+              <tr><td><code>previous_stock</code></td><td>INT</td><td>Audit Trail Start</td></tr>
+              <tr><td><code>new_stock</code></td><td>INT</td><td>Audit Trail End</td></tr>
+              <tr><td><code>reason</code></td><td>VARCHAR</td><td>Movement Reason</td></tr>
+              <tr><td><code>deleted_at</code></td><td>TIMESTAMP</td><td>Soft Delete Flag</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h3>🌐 Key REST API Endpoints (`/api/v1`)</h3>
+      <table>
+        <thead>
+          <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Access</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>POST</code></td><td><code>/auth/login</code></td><td>Authenticate user & issue Sanctum Bearer token</td><td>Public</td></tr>
+          <tr><td><code>GET</code></td><td><code>/dashboard/summary</code></td><td>Retrieve live KPI metrics & count summaries</td><td>Sanctum</td></tr>
+          <tr><td><code>GET/POST</code></td><td><code>/products</code></td><td>List (with search/filters) or create product SKU</td><td>Sanctum</td></tr>
+          <tr><td><code>GET/PUT/DELETE</code></td><td><code>/products/{id}</code></td><td>View, update, or soft-delete product</td><td>Sanctum</td></tr>
+          <tr><td><code>GET/POST/DELETE</code></td><td><code>/stock-movements</code></td><td>Audit log, record stock movement, or void</td><td>Sanctum</td></tr>
+          <tr><td><code>GET/POST/DELETE</code></td><td><code>/recycle-bin/products</code></td><td>List soft-deleted items, restore, or permanent purge</td><td>Sanctum</td></tr>
+        </tbody>
+      </table>
+
+      <h2><span class="section-num">4</span> Step-by-Step Execution Guide</h2>
+      
+      <div class="callout">
+        <strong>🔑 Default Admin Credentials:</strong> Email: <code>admin@hardwarehub.com</code> &nbsp;|&nbsp; Password: <code>password</code>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="arch-card">
+          <h3>Step 1: Database & Backend Server</h3>
+          <p>1. Start <strong>MySQL</strong> in XAMPP (Port 3306).</p>
+          <p>2. Open Terminal 1 and start Laravel server:</p>
+          <div class="cmd-box">cd d:\HardwareHub\hardwarehub-backend<br/>php artisan serve --host 0.0.0.0 --port 8000</div>
+        </div>
+
+        <div class="arch-card">
+          <h3>Step 2: React Web Frontend</h3>
+          <p>1. Open Terminal 2 and start Vite server:</p>
+          <div class="cmd-box">cd d:\HardwareHub\hardwarehub-backend<br/>npm run dev</div>
+          <p>2. Open browser: <strong><code>http://localhost:5173</code></strong></p>
+        </div>
+      </div>
+
+      <div class="arch-card" style="margin-top: 6px;">
+        <h3>Step 3: Flutter Mobile Application</h3>
+        <p>Connect your Android phone (Samsung Galaxy A05s) via USB or Wi-Fi, then run:</p>
+        <div class="cmd-box">
+          & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" reverse tcp:8000 tcp:8000<br/>
+          cd d:\HardwareHub\hardwarehub_mobile<br/>
+          flutter run -d R7AW903PBSM
+        </div>
+        <p style="font-size: 7.2pt; color: #64748b;">
+          * Note: The app automatically detects USB mode (<code>127.0.0.1:8000</code>) and Wi-Fi mode (<code>192.168.1.3:8000</code>) via its built-in Auto-Fallback Engine.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>HardwareHub — Intern Full-Stack Assessment Report</span>
+      <span>Page 2 of 2</span>
+    </div>
+  </div>
+
+</body>
+</html>
