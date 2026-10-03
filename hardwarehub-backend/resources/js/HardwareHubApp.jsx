@@ -12,9 +12,22 @@ import { Loader2 } from 'lucide-react';
 export default function HardwareHubApp() {
     const [user, setUser] = useState(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
-    const [activePage, setActivePage] = useState('dashboard');
+    const [activePage, setActivePage] = useState(() => {
+        try {
+            return localStorage.getItem('hardwarehub_active_page') || 'dashboard';
+        } catch (_) {
+            return 'dashboard';
+        }
+    });
     const [loggingOut, setLoggingOut] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const handleSetActivePage = (page) => {
+        setActivePage(page);
+        try {
+            localStorage.setItem('hardwarehub_active_page', page);
+        } catch (_) {}
+    };
 
     // Check if user is logged in
     const checkAuth = async () => {
@@ -44,7 +57,7 @@ export default function HardwareHubApp() {
 
     const handleLoginSuccess = (userData) => {
         setUser(userData);
-        setActivePage('dashboard');
+        handleSetActivePage('dashboard');
     };
 
     const handleLogout = async () => {
@@ -87,7 +100,7 @@ export default function HardwareHubApp() {
                 <Sidebar
                     user={user}
                     activePage={activePage}
-                    setActivePage={setActivePage}
+                    setActivePage={handleSetActivePage}
                     onLogout={handleLogout}
                     loggingOut={loggingOut}
                 />
@@ -105,7 +118,7 @@ export default function HardwareHubApp() {
                             user={user}
                             activePage={activePage}
                             setActivePage={(page) => {
-                                setActivePage(page);
+                                handleSetActivePage(page);
                                 setSidebarOpen(false);
                             }}
                             onLogout={handleLogout}
@@ -124,7 +137,7 @@ export default function HardwareHubApp() {
 
                 <main className="flex-1 overflow-y-auto no-scrollbar p-6 sm:p-8 lg:p-10 w-full space-y-6">
                     {activePage === 'dashboard' && (
-                        <Dashboard setActivePage={setActivePage} />
+                        <Dashboard setActivePage={handleSetActivePage} />
                     )}
 
                     {activePage === 'products' && (
@@ -136,7 +149,7 @@ export default function HardwareHubApp() {
                     )}
 
                     {activePage === 'recycle-bin' && (
-                        <RecycleBin setActivePage={setActivePage} />
+                        <RecycleBin setActivePage={handleSetActivePage} />
                     )}
 
                     {activePage === 'users' && (
