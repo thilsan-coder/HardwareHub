@@ -52,8 +52,8 @@ class _ProductListScreenState extends State<ProductListScreen> with AutomaticKee
     super.dispose();
   }
 
-  Future<void> _loadProducts() async {
-    if (_products.isEmpty) {
+  Future<void> _loadProducts({bool forceRefresh = false}) async {
+    if (_products.isEmpty || forceRefresh) {
       setState(() => _isLoading = true);
     }
     try {
@@ -61,12 +61,11 @@ class _ProductListScreenState extends State<ProductListScreen> with AutomaticKee
         search: _searchQuery.isEmpty ? null : _searchQuery,
         category: _selectedCategory == 'All' ? null : _selectedCategory,
         status: _selectedStatus == 'All' ? null : _selectedStatus,
+        forceRefresh: forceRefresh,
       );
       if (mounted) {
         setState(() {
-          if (items.isNotEmpty || _products.isEmpty || _searchQuery.isNotEmpty || _selectedCategory != 'All' || _selectedStatus != 'All') {
-            _products = items;
-          }
+          _products = items;
           _isLoading = false;
         });
       }
@@ -90,7 +89,7 @@ class _ProductListScreenState extends State<ProductListScreen> with AutomaticKee
       ),
     );
     if (result == true) {
-      _loadProducts();
+      _loadProducts(forceRefresh: true);
     }
   }
 
@@ -102,7 +101,7 @@ class _ProductListScreenState extends State<ProductListScreen> with AutomaticKee
       ),
     );
     if (result == true) {
-      _loadProducts();
+      _loadProducts(forceRefresh: true);
     }
   }
 

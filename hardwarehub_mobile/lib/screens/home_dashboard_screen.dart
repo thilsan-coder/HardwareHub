@@ -34,19 +34,21 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     _loadDashboardData();
   }
 
-  Future<void> _loadDashboardData() async {
-    final cached = await ProductService().getCachedDashboardSummary();
-    if (cached != null && mounted) {
-      setState(() {
-        _stats = cached;
-        _isLoading = false;
-      });
-    } else if (_stats == null) {
-      setState(() => _isLoading = true);
+  Future<void> _loadDashboardData({bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      final cached = await ProductService().getCachedDashboardSummary();
+      if (cached != null && mounted) {
+        setState(() {
+          _stats = cached;
+          _isLoading = false;
+        });
+      } else if (_stats == null) {
+        setState(() => _isLoading = true);
+      }
     }
 
     final user = await AuthService().fetchCurrentUser();
-    final stats = await ProductService().getDashboardSummary();
+    final stats = await ProductService().getDashboardSummary(forceRefresh: forceRefresh);
 
     if (mounted) {
       setState(() {
@@ -337,7 +339,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                           context,
                           MaterialPageRoute(builder: (_) => const ProductFormScreen()),
                         );
-                        if (added == true) _loadDashboardData();
+                        if (added == true) _loadDashboardData(forceRefresh: true);
                       },
                     ),
                   ),
@@ -353,7 +355,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                           context,
                           MaterialPageRoute(builder: (_) => const StockMovementFormScreen()),
                         );
-                        if (added == true) _loadDashboardData();
+                        if (added == true) _loadDashboardData(forceRefresh: true);
                       },
                     ),
                   ),

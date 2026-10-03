@@ -18,6 +18,16 @@ class ProductService {
   DashboardStatsModel? _inMemorySummary;
   List<ProductModel>? _inMemoryProducts;
 
+  Future<void> clearCache() async {
+    _inMemorySummary = null;
+    _inMemoryProducts = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_keyCachedSummary);
+      await prefs.remove(_keyCachedProducts);
+    } catch (_) {}
+  }
+
   Future<DashboardStatsModel?> getCachedDashboardSummary() async {
     if (_inMemorySummary != null) return _inMemorySummary;
     try {
@@ -35,7 +45,7 @@ class ProductService {
   }
 
   // 1. Dashboard Metrics Summary
-  Future<DashboardStatsModel?> getDashboardSummary() async {
+  Future<DashboardStatsModel?> getDashboardSummary({bool forceRefresh = false}) async {
     final res = await _api.get('/dashboard/summary');
     if (res.success && res.data != null) {
       final map = res.data['data'] ?? res.data['summary'] ?? (res.data is Map<String, dynamic> ? res.data : null);
@@ -53,7 +63,7 @@ class ProductService {
   }
 
   // 2. Products List (with search & filter)
-  Future<List<ProductModel>> getProducts({String? search, String? category, String? status}) async {
+  Future<List<ProductModel>> getProducts({String? search, String? category, String? status, bool forceRefresh = false}) async {
     final queryParams = <String, String>{};
     if (search != null && search.trim().isNotEmpty) queryParams['search'] = search.trim();
     if (category != null && category != 'All') queryParams['category'] = category;
@@ -80,8 +90,8 @@ class ProductService {
       }
     }
 
-    // If request failed on default view, return cached products
-    if (search == null && (category == null || category == 'All') && (status == null || status == 'All')) {
+    // If request failed on default view and not force refresh, return cached products
+    if (!forceRefresh && search == null && (category == null || category == 'All') && (status == null || status == 'All')) {
       if (_inMemoryProducts != null && _inMemoryProducts!.isNotEmpty) {
         return _inMemoryProducts!;
       }
@@ -117,8 +127,7 @@ class ProductService {
   Future<ApiResponse> createProduct(Map<String, dynamic> data) async {
     final res = await _api.post('/products', data);
     if (res.success) {
-      // Invalidate cache to trigger fresh pull
-      getDashboardSummary();
+      await clearCache();
     }
     return res;
   }
@@ -127,7 +136,7 @@ class ProductService {
   Future<ApiResponse> updateProduct(int id, Map<String, dynamic> data) async {
     final res = await _api.put('/products/$id', data);
     if (res.success) {
-      getDashboardSummary();
+      await clearCache();
     }
     return res;
   }
@@ -136,7 +145,7 @@ class ProductService {
   Future<ApiResponse> deleteProduct(int id) async {
     final res = await _api.delete('/products/$id');
     if (res.success) {
-      getDashboardSummary();
+      await clearCache();
     }
     return res;
   }
@@ -162,13 +171,17 @@ class ProductService {
   Future<ApiResponse> restoreProduct(int id) async {
     final res = await _api.post('/recycle-bin/$id/restore', {});
     if (res.success) {
-      getDashboardSummary();
+      await clearCache();
     }
     return res;
   }
 
   // 9. Permanently Force Delete Product
   Future<ApiResponse> forceDeleteProduct(int id) async {
-    return await _api.delete('/recycle-bin/$id/force-delete');
+    final res = await _api.delete('/recycle-bin/$id/force-delete');
+    if (res.success) {
+      await clearCache();
+    }
+    return res;
   }
 }

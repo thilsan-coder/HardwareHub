@@ -36,8 +36,8 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> with Automa
     super.dispose();
   }
 
-  Future<void> _loadMovements() async {
-    if (_movements.isEmpty) {
+  Future<void> _loadMovements({bool forceRefresh = false}) async {
+    if (_movements.isEmpty || forceRefresh) {
       setState(() => _isLoading = true);
     }
     try {
@@ -47,9 +47,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> with Automa
       );
       if (mounted) {
         setState(() {
-          if (items.isNotEmpty || _movements.isEmpty || _searchQuery.isNotEmpty || _selectedType != 'All') {
-            _movements = items;
-          }
+          _movements = items;
           _isLoading = false;
         });
       }
@@ -73,7 +71,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> with Automa
       ),
     );
     if (result == true) {
-      _loadMovements();
+      _loadMovements(forceRefresh: true);
     }
   }
 
@@ -85,7 +83,7 @@ class _StockMovementsScreenState extends State<StockMovementsScreen> with Automa
       ),
     );
     if (result == true) {
-      _loadMovements();
+      _loadMovements(forceRefresh: true);
     }
   }
 
