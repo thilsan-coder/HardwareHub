@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\StockMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -144,6 +145,19 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
+        // Record initial stock movement if quantity > 0
+        if ($product->quantity > 0) {
+            StockMovement::create([
+                'product_id' => $product->id,
+                'user_id' => $request->user()?->id,
+                'type' => 'in',
+                'quantity_changed' => $product->quantity,
+                'previous_stock' => 0,
+                'new_stock' => $product->quantity,
+                'reason' => 'Initial catalog registration stock',
+            ]);
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Product registered successfully.',
@@ -165,6 +179,8 @@ class ProductController extends Controller
             ], 404);
         }
 
+        $previousQuantity = $product->quantity;
+
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'sku' => ['sometimes', 'required', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($product->id)],
@@ -182,11 +198,25 @@ class ProductController extends Controller
 
         $product->update($validated);
 
+        // Record stock movement if quantity changed
+        if (isset($validated['quantity']) && $previousQuantity !== (int) $validated['quantity']) {
+            $diff = (int) $validated['quantity'] - $previousQuantity;
+            StockMovement::create([
+                'product_id' => $product->id,
+                'user_id' => $request->user()?->id,
+                'type' => $diff > 0 ? 'in' : 'out',
+                'quantity_changed' => $diff,
+                'previous_stock' => $previousQuantity,
+                'new_stock' => $product->quantity,
+                'reason' => 'Mobile catalog edit stock adjustment',
+            ]);
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Product updated successfully.',
             'data' => $this->formatProduct($product->fresh()),
-        ]);
+        ], 200);
     }
 
     /**
@@ -221,6 +251,19 @@ class ProductController extends Controller
         }
 
         $product->update(['quantity' => $newQuantity]);
+
+        if ($previousQuantity !== $newQuantity) {
+            $diff = $newQuantity - $previousQuantity;
+            StockMovement::create([
+                'product_id' => $product->id,
+                'user_id' => $request->user()?->id,
+                'type' => $diff > 0 ? 'in' : 'out',
+                'quantity_changed' => $diff,
+                'previous_stock' => $previousQuantity,
+                'new_stock' => $newQuantity,
+                'reason' => $validated['note'] ?? 'Mobile quick stock adjustment',
+            ]);
+        }
 
         return response()->json([
             'status' => 'success',
