@@ -61,17 +61,13 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
     setState(() => _isLoading = true);
 
-    final cleanPrice = _priceController.text.replaceAll(' ', '').replaceAll(',', '.').trim();
-    final cleanQty = _quantityController.text.replaceAll(' ', '').trim();
-    final cleanThreshold = _thresholdController.text.replaceAll(' ', '').trim();
-
     final payload = {
       'name': _nameController.text.trim(),
       'sku': _skuController.text.trim().toUpperCase(),
       'description': _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
-      'price': double.tryParse(cleanPrice) ?? 0.0,
-      'quantity': int.tryParse(cleanQty) ?? 0,
-      'low_stock_threshold': int.tryParse(cleanThreshold) ?? 10,
+      'price': double.tryParse(_priceController.text.trim()) ?? 0.0,
+      'quantity': int.tryParse(_quantityController.text.trim()) ?? 0,
+      'low_stock_threshold': int.tryParse(_thresholdController.text.trim()) ?? 10,
       'category': _category,
       'status': _status,
     };
@@ -236,8 +232,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                     ),
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) return 'Price is required';
-                      final cleaned = val.replaceAll(' ', '').replaceAll(',', '.').trim();
-                      final num = double.tryParse(cleaned);
+                      final num = double.tryParse(val.trim());
                       if (num == null || num < 0) return 'Enter a valid positive price';
                       return null;
                     },
