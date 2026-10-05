@@ -91,23 +91,21 @@ class ProductService {
       }
     }
 
-    // If request failed on default view and not force refresh, return cached products
-    if (!forceRefresh && search == null && (category == null || category == 'All') && (status == null || status == 'All')) {
-      if (_inMemoryProducts != null && _inMemoryProducts!.isNotEmpty) {
-        return _inMemoryProducts!;
-      }
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        final jsonStr = prefs.getString(_keyCachedProducts);
-        if (jsonStr != null && jsonStr.isNotEmpty) {
-          final decoded = jsonDecode(jsonStr);
-          if (decoded is List) {
-            _inMemoryProducts = decoded.map((i) => ProductModel.fromJson(i)).toList();
-            return _inMemoryProducts!;
-          }
-        }
-      } catch (_) {}
+    // If request failed, gracefully fallback to in-memory or persisted cached products
+    if (_inMemoryProducts != null && _inMemoryProducts!.isNotEmpty) {
+      return _inMemoryProducts!;
     }
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = prefs.getString(_keyCachedProducts);
+      if (jsonStr != null && jsonStr.isNotEmpty) {
+        final decoded = jsonDecode(jsonStr);
+        if (decoded is List) {
+          _inMemoryProducts = decoded.map((i) => ProductModel.fromJson(i)).toList();
+          return _inMemoryProducts!;
+        }
+      }
+    } catch (_) {}
 
     return _inMemoryProducts ?? [];
   }
@@ -148,7 +146,15 @@ class ProductService {
   Future<ApiResponse> deleteProduct(int id) async {
     final res = await _api.delete('/products/$id');
     if (res.success) {
-      await clearCache();
+      if (_inMemoryProducts != null) {
+        _inMemoryProducts = _inMemoryProducts!.where((p) => p.id != id).toList();
+      }
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        if (_inMemoryProducts != null) {
+          await prefs.setString(_keyCachedProducts, jsonEncode(_inMemoryProducts!.map((p) => p.toJson()).toList()));
+        }
+      } catch (_) {}
       AppEventBus().notifyDataMutated();
     }
     return res;
